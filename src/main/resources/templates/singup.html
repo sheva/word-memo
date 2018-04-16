@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sign Up</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="container">
+    <div class="wrap-login100 p-t-85 p-b-20">
+        <form class="login100-form validate-form" action="#" th:action="@{/singup}" th:object="${user}" method="post" autocomplete="off">
+            <span class="login100-form-title cabin-sketch-font">Sing Up</span>
+            <span class="login100-form-avatar">
+                <img th:src="@{/images/memo.png}"/>
+            </span>
+
+            <div class="wrap-input100 m-t-75 m-b-35">
+                <span class="label-input100">Username</span>
+                <input class="input100" type="text" th:field="*{username}" autocomplete="new-password"/>
+                <span class="validate-input" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span>
+            </div>
+
+
+            <div class="wrap-input100 m-b-50">
+                <span class="label-input100">Password</span>
+                <input class="input100" type="password" th:field="*{password}" autocomplete="new-password"/>
+                <span class="validate-input" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span>
+            </div>
+
+            <div class="wrap-input100 m-b-35">
+                <span class="label-input100">Verify Password</span>
+                <input class="input100" type="password" th:field="*{passwordVerified}" autocomplete="new-password"/>
+                <span class="validate-input" th:if="${#fields.hasErrors('passwordVerified')}" th:errors="*{passwordVerified}">Password Verified Error</span>
+            </div>
+
+            <div class="wrap-input100 m-b-50">
+                <span class="label-input100">Email</span>
+                <input class="input100" type="email" th:field="*{email}" autocomplete="new-password"/>
+                <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
+            </div>
+
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn">Create</button>
+            </div>
+
+            <ul class="login-more m-t-20">
+                <li class="m-b-8">
+                    <span class="txt1">Already have an account?</span>
+                    <a href="/index" class="txt2">Login</a>
+                </li>
+            </ul>
+        </form>
+    </div>
+</div>
+</body>
+
+</html>
+
