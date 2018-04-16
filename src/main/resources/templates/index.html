@@ -17,13 +17,13 @@
 
                 <div class="wrap-input100 m-t-75 m-b-35">
                     <span class="label-input100">Username</span>
-                    <input class="input100" type="text" th:field="*{username}" autocomplete="new-password"/>
+                    <input class="input100" type="text" th:field="*{username}" autocomplete="new-password" required/>
                     <span class="validate-input" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span>
                 </div>
 
                 <div class="wrap-input100 m-b-50">
                     <span class="label-input100">Password</span>
-                    <input class="input100" type="password" th:field="*{password}" autocomplete="new-password"/>
+                    <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
                     <span class="validate-input" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span>
                 </div>
 

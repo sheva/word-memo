@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User userLogin(final String username, final String password) {
-        final Optional<User> userOptional = userRepository.findById(username);
+        final Optional<User> userOptional = userRepository.findByUsername(username);
         final User user = userOptional.orElseThrow(() -> new UserNotFound(String.format("Can't find user '%s'.", username)));
 
         boolean passwordMatch = verifyUserPassword(password, user.getPassword(), user.getSalt());

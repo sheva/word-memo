@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -21,15 +20,13 @@ public class User {
     @Id
     private String id;
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Must not be blank.")
     @Pattern(regexp = "^[\\p{Alnum}]{2,}$", message = "Should contain at least 2 alphanumeric symbols.")
     @Indexed(unique = true)
     private String username;
 
-    @NotNull
-    @NotBlank
-    @Pattern(regexp = "^.{6,}$", message = "Should contain at least 6 symbols.")
+    @NotBlank(message = "Must not be blank.")
+    @Pattern(regexp = "^.{3,}$", message = "Should contain at least 3 symbols.")
     private String password;
 
     @Transient

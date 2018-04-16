@@ -2,6 +2,7 @@ package com.essheva.wordMemo.controllers;
 
 import com.essheva.wordMemo.domain.Session;
 import com.essheva.wordMemo.domain.User;
+import com.essheva.wordMemo.exceptions.NotFoundError;
 import com.essheva.wordMemo.exceptions.UserAlreadyExistsError;
 import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.SessionService;
@@ -19,6 +20,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import static java.lang.String.format;
 
 @Slf4j
 @Controller
@@ -66,9 +69,9 @@ public class IndexController {
     @PostMapping("/singup")
     public String singup(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult, HttpServletResponse response) {
         if (!userModel.getPassword().equals(userModel.getPasswordVerified())) {
-            bindingResult.addError(new FieldError("user", "passwordVerified", "Password do not match."));
-            return "singup";
+            bindingResult.addError(new FieldError("user", "passwordVerified", "Passwords do not match."));
         }
+
         if (bindingResult.hasErrors()) {
             return "singup";
         }
@@ -79,13 +82,13 @@ public class IndexController {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFound.class)
-    public ModelAndView handleUserNotFound(Exception exception, HttpServletRequest request) {
-        log.error("Handling user not found exception.");
+    @ExceptionHandler({NotFoundError.class, UserNotFound.class})
+    public ModelAndView handleNotFound(Exception exception, HttpServletRequest request) {
+        log.error("Handling not found exception.");
         log.error(exception.getMessage());
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("404error");
+        modelAndView.setViewName("400error");
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("originURL", request.getServletPath());
 

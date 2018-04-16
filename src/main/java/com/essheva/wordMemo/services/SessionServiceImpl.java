@@ -3,7 +3,7 @@ package com.essheva.wordMemo.services;
 import com.essheva.wordMemo.crypto.EncryptionUtils;
 import com.essheva.wordMemo.domain.Session;
 import com.essheva.wordMemo.domain.User;
-import com.essheva.wordMemo.exceptions.SessionNotFound;
+import com.essheva.wordMemo.exceptions.NotFoundError;
 import com.essheva.wordMemo.repositories.SessionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,10 +24,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public String getUsernameBySessionId(final String id) {
         final Optional<Session> session = sessionRepository.findById(id);
-        session.orElseThrow(() -> {
-            log.error("Session not found by id " + id);
-            throw new SessionNotFound("Session not found by id " + id);
-        });
+        session.orElseThrow(() -> new NotFoundError("Session not found by id " + id));
         log.info(format("User found by session id [%s].", id));
         return session.get().getUsername();
     }
@@ -48,10 +45,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Session findSessionById(final String id) {
         final Optional<Session> session = sessionRepository.findById(id);
-        session.orElseThrow(() -> {
-            log.error(format("Session not found by id [%s].", id));
-            throw new SessionNotFound("Session not found by id " + id);
-        });
+        session.orElseThrow(() -> new NotFoundError("Session not found by id " + id));
         log.info("Session found " + session.toString());
         return session.get();
     }
