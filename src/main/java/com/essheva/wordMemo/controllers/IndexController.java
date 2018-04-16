@@ -88,7 +88,7 @@ public class IndexController {
         log.error(exception.getMessage());
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("400error");
+        modelAndView.setViewName("404error");
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("originURL", request.getServletPath());
 
