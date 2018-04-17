@@ -106,7 +106,7 @@ button:hover {
     margin: 0 auto;
 }
 
-.container {
+.login-container {
     width: 100%;
     min-height: 100vh;
     display: -webkit-box;

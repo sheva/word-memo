@@ -11,4 +11,6 @@ public interface UserService {
     User userLogin(String username, String password);
 
     Set<User> getUsers();
+
+    User findUserByEmail(String email);
 }

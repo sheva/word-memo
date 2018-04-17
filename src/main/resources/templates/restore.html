@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Restore Password</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="login-container">
+    <div class="error-status">
+        <form class="login100-form validate-form" action="#" th:action="@{/restore}" th:object="${user}" method="post" autocomplete="off">
+            <h1 class="cabin-sketch-font">Do you need to restore password?</h1>
+            <span>Enter your address below, and we will email you instructions for setting a new password.</span>
+            <div class="wrap-input100 m-t-20 m-b-35">
+                <span class="label-input100">Email</span>
+                <input class="input100" type="email" th:field="*{email}" autocomplete="new-password" required/>
+                <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
+            </div>
+
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn">Reset password</button>
+            </div>
+
+            <div class="m-t-20">
+                <span class="txt1">I recall the password. Never mind.</span>
+                <span class="txt1">Go <a class="txt2" th:href="@{${originURL}}">back</a></span>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

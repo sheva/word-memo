@@ -2,26 +2,23 @@ package com.essheva.wordMemo.controllers;
 
 import com.essheva.wordMemo.domain.Session;
 import com.essheva.wordMemo.domain.User;
-import com.essheva.wordMemo.exceptions.NotFoundError;
-import com.essheva.wordMemo.exceptions.UserAlreadyExistsError;
 import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.SessionService;
 import com.essheva.wordMemo.services.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
-import static java.lang.String.format;
 
 @Slf4j
 @Controller
@@ -46,7 +43,7 @@ public class IndexController {
     }
 
     @PostMapping("/")
-    public String postIndexLogin(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult, HttpServletResponse response) {
+    public String postIndexLogin(@ModelAttribute("user") User userModel, BindingResult bindingResult, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "index";
         }
@@ -57,7 +54,7 @@ public class IndexController {
         cookie.setMaxAge(3600);
         response.addCookie(cookie);
 
-        return "index";
+        return "redirect:/index";
     }
 
     @GetMapping("/singup")
@@ -71,7 +68,6 @@ public class IndexController {
         if (!userModel.getPassword().equals(userModel.getPasswordVerified())) {
             bindingResult.addError(new FieldError("user", "passwordVerified", "Passwords do not match."));
         }
-
         if (bindingResult.hasErrors()) {
             return "singup";
         }
@@ -79,34 +75,6 @@ public class IndexController {
         Session session = sessionService.startSession(user);
         response.addCookie(new Cookie("sessionId", session.getId()));
         return "redirect:/index";
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({NotFoundError.class, UserNotFound.class})
-    public ModelAndView handleNotFound(Exception exception, HttpServletRequest request) {
-        log.error("Handling not found exception.");
-        log.error(exception.getMessage());
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("404error");
-        modelAndView.addObject("exception", exception);
-        modelAndView.addObject("originURL", request.getServletPath());
-
-        return modelAndView;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserAlreadyExistsError.class)
-    public ModelAndView handleUserDuplication(Exception exception, HttpServletRequest request) {
-        log.error("Handling user duplication exception.");
-        log.error(exception.getMessage());
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("400error");
-        modelAndView.addObject("exception", exception);
-        modelAndView.addObject("originURL", request.getServletPath());
-
-        return modelAndView;
     }
 
     @GetMapping("/logout")
@@ -119,5 +87,26 @@ public class IndexController {
             response.addCookie(cookie);
         }
         return "redirect:/index";
+    }
+
+    @GetMapping("/restore")
+    public String restorePassword(Model model, HttpServletRequest request) {
+        model.addAttribute("user", new User());
+        model.addAttribute("originURL", request.getContextPath());
+        return "restore";
+    }
+
+    @PostMapping("/restore")
+    public String restorePasswordAction(@ModelAttribute("user") User user, BindingResult bindingResult) {
+        if (user.getEmail() == null) {
+            bindingResult.addError(new FieldError("user", "email", "Should not be blank."));
+        }
+        try {
+            userService.findUserByEmail(user.getEmail());
+        } catch (UserNotFound e) {
+            log.error("User not found.");
+            bindingResult.addError(new FieldError("user", "email", "User does not exists with this email address."));
+        }
+        return "restore";
     }
 }

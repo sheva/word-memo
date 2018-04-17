@@ -28,9 +28,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(final User user) {
-        final String salt = getSalt(30);
+        final String salt = getSalt();
         final String passwordSecured = generateSecurePassword(user.getPassword(), salt);
-
         user.setSalt(salt);
         user.setPassword(passwordSecured);
 
@@ -38,17 +37,17 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             log.info("User has been created: " + user);
         } catch (DuplicateKeyException e) {
-            log.error("Duplicated user found.", e);
-            throw new UserAlreadyExistsError(format("User with username '%s' already exists. Please, choose another username.", user.getUsername()), e);
+            log.error("User with the same username was found.", e);
+            throw new UserAlreadyExistsError(format("User with username '%s' already exists. " +
+                    "Please, choose another username.", user.getUsername()), e);
         }
-
         return user;
     }
 
     @Override
     public User userLogin(final String username, final String password) {
         final Optional<User> userOptional = userRepository.findByUsername(username);
-        final User user = userOptional.orElseThrow(() -> new UserNotFound(String.format("Can't find user '%s'.", username)));
+        final User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user '%s'.", username)));
 
         boolean passwordMatch = verifyUserPassword(password, user.getPassword(), user.getSalt());
         if (!passwordMatch) {
@@ -56,7 +55,7 @@ public class UserServiceImpl implements UserService {
             throw new InvalidCredentialsError("Password mismatch error.");
         }
 
-        log.info(String.format("User '%s' has been logged in.", user.getUsername()));
+        log.info(format("User '%s' has been logged in.", username));
         return user;
     }
 
@@ -65,5 +64,13 @@ public class UserServiceImpl implements UserService {
         Set<User> users = new HashSet<>();
         userRepository.findAll().forEach(users::add);
         return users;
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with email address '%s'.", email)));
+        log.info(format("User with email address '%s' found.", email));
+        return user;
     }
 }

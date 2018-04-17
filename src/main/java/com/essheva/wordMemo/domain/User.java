@@ -8,7 +8,8 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -20,12 +21,12 @@ public class User {
     @Id
     private String id;
 
-    @NotBlank(message = "Must not be blank.")
+    @NotEmpty(message = "Must not be blank or empty.")
     @Pattern(regexp = "^[\\p{Alnum}]{2,}$", message = "Should contain at least 2 alphanumeric symbols.")
     @Indexed(unique = true)
     private String username;
 
-    @NotBlank(message = "Must not be blank.")
+    @NotEmpty(message = "Must not be blank or empty.")
     @Pattern(regexp = "^.{3,}$", message = "Should contain at least 3 symbols.")
     private String password;
 
@@ -34,7 +35,7 @@ public class User {
 
     private String salt;
 
-    @Pattern(regexp = "|^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
-            message = "Invalid email mentioned. Please, double check.")
+    @NotEmpty(message = "Must not be blank or empty.")
+    @Email(message = "Invalid email mentioned. Please, double check.")
     private String email;
 }
