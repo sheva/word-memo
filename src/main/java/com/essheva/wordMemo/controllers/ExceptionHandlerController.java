@@ -26,15 +26,15 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAlreadyExistsError.class)
-    public ModelAndView handleUserDuplication(Exception exception, HttpServletRequest request) {
-        log.error("Handling user duplication exception.");
+    public ModelAndView handleBadRequest(Exception exception, HttpServletRequest request) {
+        log.error("Handling malformed data request exception.");
         return createModelAndView(exception, request, "400error");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidCredentialsError.class)
-    public ModelAndView handlePasswordInvalid(Exception exception, HttpServletRequest request) {
-        log.error("Handling password mismatch exception.");
+    public ModelAndView handleUnauthorizedRequest(Exception exception, HttpServletRequest request) {
+        log.error("Handling lack of authentication credentials exception.");
         return createModelAndView(exception, request, "401error");
     }
 
