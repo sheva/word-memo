@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
-        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with mail address '%s'.", email)));
-        log.info(format("User with mail address '%s' found.", email));
+        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with email address '%s'.", email)));
+        log.info(format("User with email address '%s' found.", email));
         return user;
     }
 }
