@@ -13,4 +13,8 @@ public interface UserService {
     Set<User> getUsers();
 
     User findUserByEmail(String email);
+
+    User findUserById(String id);
+
+    User updatePassword(User user, String newPassword);
 }

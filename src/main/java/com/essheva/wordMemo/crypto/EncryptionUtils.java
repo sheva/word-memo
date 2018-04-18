@@ -18,6 +18,7 @@ public class EncryptionUtils {
     private static final Random GENERATOR = new SecureRandom();
     private static final String ALNUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ITERATIONS = 10000;
+    private static final int TOKEN_CAPACITY = 32;
     private static final int SALT_LENGTH = 64;
     private static final int KEY_LENGTH = 256;
 
@@ -57,5 +58,13 @@ public class EncryptionUtils {
         byte[] randomBytes = new byte[32];
         GENERATOR.nextBytes(randomBytes);
         return Base64.getEncoder().encodeToString(randomBytes);
+    }
+
+    public static String generateToken() {
+        StringBuilder token = new StringBuilder(TOKEN_CAPACITY);
+        for (int i = 0; i < TOKEN_CAPACITY; i++) {
+            token.append(ALNUM.charAt(GENERATOR.nextInt(ALNUM.length())));
+        }
+        return token.toString();
     }
 }

@@ -5,7 +5,6 @@ import com.essheva.wordMemo.domain.User;
 import com.essheva.wordMemo.services.SessionService;
 import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.validators.LoginValidator;
-import com.essheva.wordMemo.services.validators.RestorePasswordValidator;
 import com.essheva.wordMemo.services.validators.SignupValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -31,7 +30,7 @@ public class IndexController {
     private final SignupValidator signupValidator;
 
     public IndexController(UserService userService, SessionService sessionService, LoginValidator loginValidator,
-                           SignupValidator signupValidator, RestorePasswordValidator restorePasswordValidator) {
+                           SignupValidator signupValidator) {
         this.userService = userService;
         this.sessionService = sessionService;
         this.loginValidator = loginValidator;

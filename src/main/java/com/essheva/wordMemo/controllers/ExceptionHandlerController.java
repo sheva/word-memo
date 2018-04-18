@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ExceptionHandlerController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({NotFoundError.class, UserNotFound.class})
+    @ExceptionHandler({NotFoundError.class, UserNotFound.class, ResetTokenNotFoundError.class})
     public ModelAndView handleNotFound(Exception exception, HttpServletRequest request) {
         log.error("Handling not found exception.");
         return createModelAndView(exception, request, "404error");
@@ -40,6 +40,13 @@ public class ExceptionHandlerController {
     public ModelAndView handleInternalServerError(Exception exception, HttpServletRequest request) {
         log.error("Handling application failure error.");
         return createModelAndView(exception, request, "500error");
+    }
+
+    @ResponseStatus(HttpStatus.GONE)
+    @ExceptionHandler(ResourceNoLongerAvailableError.class)
+    public ModelAndView handleResourceGoneError(Exception exception, HttpServletRequest request) {
+        log.error("Handling resource no longer available error.");
+        return createModelAndView(exception, request, "410error");
     }
 
     private ModelAndView createModelAndView(Exception exception, HttpServletRequest request, String viewName) {

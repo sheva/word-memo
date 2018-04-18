@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 @Service
-public class RestorePasswordValidatorImpl implements RestorePasswordValidator {
+public class UserEmailValidatorImpl implements UserEmailValidator {
 
     private final UserPropSelectiveValidator validator;
 
-    public RestorePasswordValidatorImpl(UserPropSelectiveValidator validator) {
+    public UserEmailValidatorImpl(UserPropSelectiveValidator validator) {
         this.validator = validator;
     }
 

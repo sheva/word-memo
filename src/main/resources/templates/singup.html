@@ -21,7 +21,6 @@
                 <span class="validate-input" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span>
             </div>
 
-
             <div class="wrap-input100 m-b-50">
                 <span class="label-input100">Password</span>
                 <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
@@ -47,7 +46,7 @@
             <ul class="login-more m-t-20">
                 <li class="m-b-8">
                     <span class="txt1">Already have an account?</span>
-                    <a href="/index" class="txt2">Login</a>
+                    <a th:href="@{/index}" class="txt2">Login</a>
                 </li>
             </ul>
         </form>

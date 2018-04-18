@@ -73,4 +73,25 @@ public class UserServiceImpl implements UserService {
         log.info(format("User with email address '%s' found.", email));
         return user;
     }
+
+    @Override
+    public User findUserById(String id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with id '%s'.", id)));
+        log.info(format("User with id '%s' found.", id));
+        return user;
+    }
+
+    @Override
+    public User updatePassword(User user, String newPassword) {
+        final String salt = getSalt();
+        final String passwordSecured = generateSecurePassword(newPassword, salt);
+        user.setSalt(salt);
+        user.setPassword(passwordSecured);
+
+        User userUpdated = userRepository.save(user);
+        log.info(format("New password for user '%s' set.", userUpdated));
+
+        return userUpdated;
+    }
 }
