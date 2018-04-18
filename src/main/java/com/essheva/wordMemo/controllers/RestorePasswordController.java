@@ -2,6 +2,7 @@ package com.essheva.wordMemo.controllers;
 
 import com.essheva.wordMemo.domain.User;
 import com.essheva.wordMemo.exceptions.UserNotFound;
+import com.essheva.wordMemo.services.mail.MailjetMailService;
 import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.validators.RestorePasswordValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,12 @@ public class RestorePasswordController {
 
     private final UserService userService;
     private final RestorePasswordValidator restorePasswordValidator;
+    private final MailjetMailService mailjetMailService;
 
-    public RestorePasswordController(UserService userService, RestorePasswordValidator restorePasswordValidator) {
+    public RestorePasswordController(UserService userService, RestorePasswordValidator restorePasswordValidator, MailjetMailService mailjetMailService) {
         this.userService = userService;
         this.restorePasswordValidator = restorePasswordValidator;
+        this.mailjetMailService = mailjetMailService;
     }
 
     @GetMapping("/restore")
@@ -44,6 +47,8 @@ public class RestorePasswordController {
             log.error("User not found.");
             bindingResult.addError(new FieldError("user", "email", "User does not exists with this email address."));
         }
+        mailjetMailService.sendMailWithNewPassword(user.getEmail(), "blah-blah-blah");
+
         return "restore";
     }
 }

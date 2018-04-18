@@ -1,9 +1,6 @@
 package com.essheva.wordMemo.controllers;
 
-import com.essheva.wordMemo.exceptions.InvalidCredentialsError;
-import com.essheva.wordMemo.exceptions.NotFoundError;
-import com.essheva.wordMemo.exceptions.UserAlreadyExistsError;
-import com.essheva.wordMemo.exceptions.UserNotFound;
+import com.essheva.wordMemo.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,6 +33,13 @@ public class ExceptionHandlerController {
     public ModelAndView handleUnauthorizedRequest(Exception exception, HttpServletRequest request) {
         log.error("Handling lack of authentication credentials exception.");
         return createModelAndView(exception, request, "401error");
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(InternalServerError.class)
+    public ModelAndView handleInternalServerError(Exception exception, HttpServletRequest request) {
+        log.error("Handling application failure error.");
+        return createModelAndView(exception, request, "500error");
     }
 
     private ModelAndView createModelAndView(Exception exception, HttpServletRequest request, String viewName) {
