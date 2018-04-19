@@ -1,6 +1,7 @@
 package com.essheva.wordMemo.services.mail;
 
 import com.essheva.wordMemo.domain.ResetToken;
+import com.essheva.wordMemo.domain.User;
 import com.essheva.wordMemo.exceptions.InternalServerError;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
@@ -29,11 +30,15 @@ public class MailjetService {
         this.client = new MailjetClient(config.getSMTPUsername(), config.getSMTPPassword());
     }
 
-    public void sendMailWithNewPassword(String username, String to, String restoreURL, String token) {
-        JSONArray recipients = new JSONArray().put(new JSONObject().put(EMAIL, to));
-        String linkToResetPassword = restoreURL + "?token=" + token;
-        log.info("Restore password link generated " + linkToResetPassword);
-        String text = "Hi " + username + ",\n" +
+    public void sendMailForPasswordReset(User user, String restoreURL, String token) {
+        final String receiverEmail = user.getEmail();
+        final JSONArray recipients = new JSONArray().put(new JSONObject().put(EMAIL, receiverEmail));
+        final String senderEmail = config.getSenderEmail();
+
+        final String linkToResetPassword = restoreURL + "?token=" + token;
+        log.info("Restore password link generated " + linkToResetPassword); // TODO: remove after
+
+        String body = "Hi " + user.getUsername() + ",\n" +
                 "\n" +
                 "A password reset for your account was requested.\n" +
                 "\n" +
@@ -43,18 +48,18 @@ public class MailjetService {
                 "you will have to resubmit the request for a password reset by " + restoreURL;
 
         MailjetRequest email = new MailjetRequest(Email.resource)
-                .property(FROMEMAIL, config.getSenderEmail())
+                .property(FROMEMAIL, senderEmail)
                 .property(FROMNAME, "Word Memo")
                 .property(SUBJECT, "Reset password on Word Memo")
-                .property(TEXTPART, text)
+                .property(TEXTPART, body)
                 .property(RECIPIENTS, recipients)
                 .property(MJCUSTOMID, "WM-Email");
         try {
             MailjetResponse response = client.post(email);
-            log.info("Email " + (response.getStatus() == 200 ? "successfully" : "not") + " sent to " + to);
+            log.info("Email " + (response.getStatus() == 200 ? "successfully" : "not") + " sent to " + receiverEmail);
         } catch (MailjetException | MailjetSocketTimeoutException e) {
-            log.error("Error occurred during sending email to " + to, e);
-            throw new InternalServerError("Error occurred during sending email to " + to + "." + e.getMessage(), e);
+            log.error("Error occurred during sending email to " + receiverEmail, e);
+            throw new InternalServerError("Error occurred during sending email to " + receiverEmail + ". " + e.getMessage(), e);
         }
     }
 }

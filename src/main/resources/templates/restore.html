@@ -26,11 +26,11 @@
             </form>
         </div>
         <div th:case="'sent'">
-            Email with instruction has been sent to <span class="txt2" th:text="${user.email}"></span>. Please, check your inbox.
+            Email with instruction has been sent to <span class="txt2" th:text="${userEmail}"></span>. Please, check your inbox.
         </div>
-        <div th:case="'newPassword'">
+        <div th:case="'newPassword'" th:with="userIdVar=${user.getId()}?${user.getId()}:${userId}">
             <div class="wrap-login100 p-t-85 p-b-20">
-                <form class="login100-form validate-form" action="#" th:action="@{/restore/__${userId}__/newPassword}" th:object="${user}" method="post" autocomplete="off">
+                <form class="login100-form validate-form" action="#" th:action="@{/restore/__${userIdVar}__/newPassword}" th:object="${user}" method="post" autocomplete="off">
                     <span class="login100-form-title cabin-sketch-font">Restoring password...</span>
                     <div class="wrap-input100 m-t-20 m-b-50">
                         <span class="label-input100">New password</span>

@@ -2,7 +2,6 @@ package com.essheva.wordMemo.controllers;
 
 import com.essheva.wordMemo.domain.ResetToken;
 import com.essheva.wordMemo.domain.User;
-import com.essheva.wordMemo.exceptions.ResourceNoLongerAvailableError;
 import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.ResetTokenService;
 import com.essheva.wordMemo.services.UserService;
@@ -17,7 +16,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 
 
 @Slf4j
@@ -41,7 +39,7 @@ public class RestorePasswordController {
     }
 
     @GetMapping("/restore")
-    public String restorePassword(Model model,HttpServletRequest request) {
+    public String restorePassword(Model model, HttpServletRequest request) {
         model.addAttribute("user", new User());
         model.addAttribute("action", "start");
         model.addAttribute("originURL", request.getRequestURL());
@@ -55,14 +53,13 @@ public class RestorePasswordController {
             User userFound = userService.findUserByEmail(user.getEmail());
             ResetToken resetToken = resetTokenService.createToken(userFound.getId());
 
-            mailjetService.sendMailWithNewPassword(user.getUsername(), user.getEmail(), request.getRequestURL().toString(), resetToken.getToken());
+            mailjetService.sendMailForPasswordReset(userFound, request.getRequestURL().toString(), resetToken.getToken());
 
-            return "redirect:restore/" + resetToken.getUserId() + "/sent";
-
-        } catch (UserNotFound e) {
-            log.error("User not found.");
+            return "redirect:restore/" + userFound.getId() + "/sent";
+        }
+        catch (UserNotFound e) {
+            log.error("User not found.", e);
             bindingResult.addError(new FieldError("user", "email", "User does not exists with this email address."));
-
             return "restore";
         }
     }
@@ -70,37 +67,35 @@ public class RestorePasswordController {
     @GetMapping("/restore/{userId}/sent")
     public String restorePasswordSent(@PathVariable String userId, Model model, HttpServletRequest request) {
         User user = userService.findUserById(userId);
-        model.addAttribute("user", user);
         model.addAttribute("action", "sent");
-        model.addAttribute("originURL", request.getRequestURL());
+        model.addAttribute("userEmail", user.getEmail());
         return "restore";
     }
 
     @GetMapping(value = "/restore", params = {"token"})
     public String restorePassword(@RequestParam(value = "token") String token, Model model) {
         ResetToken resetToken = resetTokenService.findByToken(token);
-        if (LocalDateTime.now().isAfter(resetToken.getExpiration())) {
-            log.error("Password reset token expired.");
-            throw new ResourceNoLongerAvailableError("Password reset link has expired. Try once more.");
-        }
         User user = userService.findUserById(resetToken.getUserId());
-        model.addAttribute("userId", user.getId());
         model.addAttribute("action", "newPassword");
+        model.addAttribute("user", user);
         return "restore";
     }
 
     @PostMapping("/restore/{userId}/newPassword")
-    public String saveNewPassword(@ModelAttribute("user") User user,
-                                  BindingResult bindingResult, @PathVariable String userId, Model model) {
-        User userFound = userService.findUserById(userId);
+    public String saveNewPassword(@ModelAttribute("user") User user, BindingResult bindingResult,
+                                  @PathVariable String userId, Model model) {
+        final User userFound = userService.findUserById(userId);
+
         newPasswordValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("action", "newPassword");
             model.addAttribute("userId", userFound.getId());
             return "restore";
         }
+
         userService.updatePassword(userFound, user.getPassword());
         resetTokenService.deleteAllTokensForUser(userFound.getId());
+
         return "redirect:/restore/" + userFound.getId() + "/complete";
     }
 
