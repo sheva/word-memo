@@ -1,5 +1,6 @@
 package com.essheva.wordMemo.services.mail;
 
+import com.essheva.wordMemo.domain.ResetToken;
 import com.essheva.wordMemo.exceptions.InternalServerError;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
@@ -28,15 +29,24 @@ public class MailjetService {
         this.client = new MailjetClient(config.getSMTPUsername(), config.getSMTPPassword());
     }
 
-    public void sendMailWithNewPassword(String to, String linkToResetPassword) {
+    public void sendMailWithNewPassword(String username, String to, String restoreURL, String token) {
         JSONArray recipients = new JSONArray().put(new JSONObject().put(EMAIL, to));
+        String linkToResetPassword = restoreURL + "?token=" + token;
+        log.info("Restore password link generated " + linkToResetPassword);
+        String text = "Hi " + username + ",\n" +
+                "\n" +
+                "A password reset for your account was requested.\n" +
+                "\n" +
+                "You can use the following link to reset your password:\n" + linkToResetPassword +
+                "\n" +
+                "Note that this link is valid for " + ResetToken.TOKEN_LIVENESS.toHours() + " hours. After the time limit has expired, " +
+                "you will have to resubmit the request for a password reset by " + restoreURL;
 
         MailjetRequest email = new MailjetRequest(Email.resource)
                 .property(FROMEMAIL, config.getSenderEmail())
                 .property(FROMNAME, "Word Memo")
                 .property(SUBJECT, "Reset password on Word Memo")
-                .property(TEXTPART, "I heard that you lost your Word Memo password.\n\nDon’t worry! " +
-                        "You can use the following link to reset your password:\n\n" + linkToResetPassword)
+                .property(TEXTPART, text)
                 .property(RECIPIENTS, recipients)
                 .property(MJCUSTOMID, "WM-Email");
         try {

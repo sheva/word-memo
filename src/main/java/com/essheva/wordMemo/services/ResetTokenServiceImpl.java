@@ -23,7 +23,8 @@ public class ResetTokenServiceImpl implements ResetTokenService {
     @Override
     public ResetToken findByUserId(String userId) {
         final Optional<ResetToken> token = repository.findByUserId(userId);
-        token.orElseThrow(() -> new ResetTokenNotFoundError(String.format("Reset token not found by userId '%s'.", userId)));
+        token.orElseThrow(() -> new ResetTokenNotFoundError(String.format("Reset token not found by userId '%s'. " +
+                "Maybe you already changed password.", userId)));
         log.info(String.format("Reset token found by user id [%s].", userId));
         return token.get();
     }

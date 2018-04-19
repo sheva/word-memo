@@ -40,7 +40,7 @@ public class RestorePasswordController {
         this.mailjetService = mailjetService;
     }
 
-    @GetMapping(value = "/restore")
+    @GetMapping("/restore")
     public String restorePassword(Model model,HttpServletRequest request) {
         model.addAttribute("user", new User());
         model.addAttribute("action", "start");
@@ -55,9 +55,7 @@ public class RestorePasswordController {
             User userFound = userService.findUserByEmail(user.getEmail());
             ResetToken resetToken = resetTokenService.createToken(userFound.getId());
 
-            String linkToResetPassword = request.getRequestURL() + "?token=" + resetToken.getToken();
-            log.info("linkToReset " + linkToResetPassword);
-            mailjetService.sendMailWithNewPassword(user.getEmail(), linkToResetPassword);
+            mailjetService.sendMailWithNewPassword(user.getUsername(), user.getEmail(), request.getRequestURL().toString(), resetToken.getToken());
 
             return "redirect:restore/" + resetToken.getUserId() + "/sent";
 
@@ -68,7 +66,8 @@ public class RestorePasswordController {
             return "restore";
         }
     }
-    @GetMapping(value = "/restore/{userId}/sent")
+
+    @GetMapping("/restore/{userId}/sent")
     public String restorePasswordSent(@PathVariable String userId, Model model, HttpServletRequest request) {
         User user = userService.findUserById(userId);
         model.addAttribute("user", user);
@@ -85,25 +84,27 @@ public class RestorePasswordController {
             throw new ResourceNoLongerAvailableError("Password reset link has expired. Try once more.");
         }
         User user = userService.findUserById(resetToken.getUserId());
-        model.addAttribute("user", user);
+        model.addAttribute("userId", user.getId());
         model.addAttribute("action", "newPassword");
         return "restore";
     }
 
-    @PostMapping(value = "/restore/{userId}/newPassword")
-    public String saveNewPassword(@PathVariable String userId, @ModelAttribute("user") User user,
-                                  BindingResult bindingResult, HttpServletRequest request) {
+    @PostMapping("/restore/{userId}/newPassword")
+    public String saveNewPassword(@ModelAttribute("user") User user,
+                                  BindingResult bindingResult, @PathVariable String userId, Model model) {
         User userFound = userService.findUserById(userId);
         newPasswordValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "restore?token"; // TODO: fix!
+            model.addAttribute("action", "newPassword");
+            model.addAttribute("userId", userFound.getId());
+            return "restore";
         }
         userService.updatePassword(userFound, user.getPassword());
         resetTokenService.deleteAllTokensForUser(userFound.getId());
         return "redirect:/restore/" + userFound.getId() + "/complete";
     }
 
-    @GetMapping(value = "/restore/{userId}/complete")
+    @GetMapping("/restore/{userId}/complete")
     public String newPasswordSet(@PathVariable String userId, Model model) {
         User user = userService.findUserById(userId);
         model.addAttribute("user", user);
