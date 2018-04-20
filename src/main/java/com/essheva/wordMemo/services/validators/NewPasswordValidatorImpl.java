@@ -22,7 +22,7 @@ public class NewPasswordValidatorImpl implements NewPasswordValidator {
     public void validate(User user, BindingResult bindingResult) {
         validator.validate(user, Arrays.asList("password", "passwordVerified"), bindingResult);
         if (!user.getPassword().equals(user.getPasswordVerified())) {
-            log.error("Passwords do not match.");
+            log.debug("Passwords do not match.");
             bindingResult.addError(new FieldError("user", "passwordVerified", "Passwords do not match."));
         }
     }

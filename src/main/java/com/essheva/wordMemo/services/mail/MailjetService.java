@@ -34,9 +34,7 @@ public class MailjetService {
         final String receiverEmail = user.getEmail();
         final JSONArray recipients = new JSONArray().put(new JSONObject().put(EMAIL, receiverEmail));
         final String senderEmail = config.getSenderEmail();
-
         final String linkToResetPassword = restoreURL + "?token=" + token;
-        log.info("Restore password link generated " + linkToResetPassword); // TODO: remove after
 
         String body = "Hi " + user.getUsername() + ",\n" +
                 "\n" +
@@ -45,7 +43,9 @@ public class MailjetService {
                 "You can use the following link to reset your password:\n" + linkToResetPassword +
                 "\n" +
                 "Note that this link is valid for " + ResetToken.TOKEN_LIVENESS.toHours() + " hours. After the time limit has expired, " +
-                "you will have to resubmit the request for a password reset by " + restoreURL;
+                "you will have to resubmit the request for a password reset by " + restoreURL + "\n\n" +
+                "Thanks,\n" +
+                "Word Memo.";
 
         MailjetRequest email = new MailjetRequest(Email.resource)
                 .property(FROMEMAIL, senderEmail)
@@ -56,10 +56,10 @@ public class MailjetService {
                 .property(MJCUSTOMID, "WM-Email");
         try {
             MailjetResponse response = client.post(email);
-            log.info("Email " + (response.getStatus() == 200 ? "successfully" : "not") + " sent to " + receiverEmail);
+            log.debug("Email " + (response.getStatus() == 200 ? "successfully" : "not") + " sent to " + receiverEmail);
         } catch (MailjetException | MailjetSocketTimeoutException e) {
-            log.error("Error occurred during sending email to " + receiverEmail, e);
-            throw new InternalServerError("Error occurred during sending email to " + receiverEmail + ". " + e.getMessage(), e);
+            log.error("Error occurred during sending email to " + receiverEmail, e.getMessage(), e);
+            throw new InternalServerError("Error occurred during sending email to " + receiverEmail + ". Please, try again later.", e);
         }
     }
 }

@@ -49,9 +49,8 @@ public class EncryptionUtils {
         return Base64.getEncoder().encodeToString(securePassword);
     }
 
-    public static boolean verifyUserPassword(String providedPassword, String securedPassword, String salt) {
-        String newSecurePassword = generateSecurePassword(providedPassword, salt);
-        return newSecurePassword.equalsIgnoreCase(securedPassword);
+    public static boolean matchUserPassword(String password, String securedPassword, String salt) {
+        return generateSecurePassword(password, salt).equals(securedPassword);
     }
 
     public static String generateId() {

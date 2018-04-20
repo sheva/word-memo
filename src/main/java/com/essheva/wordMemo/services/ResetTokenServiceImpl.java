@@ -29,7 +29,9 @@ public class ResetTokenServiceImpl implements ResetTokenService {
         LocalDateTime expiration = LocalDateTime.now().plus(ResetToken.TOKEN_LIVENESS);
 
         ResetToken resetTokenSaved = repository.save(new ResetToken(userId, token, expiration));
-        log.info(format("ResetToken has been created '%s'.", resetTokenSaved));
+        if (log.isDebugEnabled()) {
+            log.debug(format("ResetToken has been created '%s'.", resetTokenSaved));
+        }
 
         return resetTokenSaved;
     }
@@ -40,10 +42,12 @@ public class ResetTokenServiceImpl implements ResetTokenService {
         resetToken.orElseThrow(() -> new ResetTokenNotFoundError(format("Reset token not found '%s'.", token)));
 
         ResetToken resetTokenFound = resetToken.get();
-        log.info(format("Reset token found %s.", resetTokenFound));
+        if (log.isTraceEnabled()) {
+            log.trace(format("Reset token found %s.", resetTokenFound));
+        }
 
         if (LocalDateTime.now().isAfter(resetTokenFound.getExpiration())) {
-            log.error("Password reset token expired.");
+            log.warn("Password reset token expired.");
             throw new ResourceNoLongerAvailableError("Password reset link has expired. Try once more.");
         }
 
@@ -54,6 +58,6 @@ public class ResetTokenServiceImpl implements ResetTokenService {
     public void deleteAllTokensForUser(String userId) {
         final Iterable<ResetToken> iterable = repository.findAllByUserId(userId);
         repository.deleteAll(iterable);
-        log.info(format("Deleted all password reset tokens for user '%s'.", userId));
+        log.debug(format("Deleted all password reset tokens for user '%s'.", userId));
     }
 }

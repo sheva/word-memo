@@ -25,28 +25,22 @@ public class SessionServiceImpl implements SessionService {
     public String getUsernameBySessionId(final String id) {
         final Optional<Session> session = sessionRepository.findById(id);
         session.orElseThrow(() -> new NotFoundError("Session not found by id " + id));
-        log.info(format("User found by session id [%s].", id));
+        log.trace(format("User found by session id [%s].", id));
         return session.get().getUsername();
     }
 
     @Override
     public Session startSession(final User user) {
         Session session = sessionRepository.save(new Session(EncryptionUtils.generateId(), user.getUsername()));
-        log.info("Session has been started " + session.toString());
+        if (log.isDebugEnabled()) {
+            log.debug("Session has been started " + session);
+        }
         return session;
     }
 
     @Override
     public void endSessionById(final String id) {
-        log.info("Deleting session by id [%s]." + id);
         sessionRepository.deleteById(id);
-    }
-
-    @Override
-    public Session findSessionById(final String id) {
-        final Optional<Session> session = sessionRepository.findById(id);
-        session.orElseThrow(() -> new NotFoundError("Session not found by id " + id));
-        log.info("Session found " + session.toString());
-        return session.get();
+        log.debug(format("Session [%s] was deleted.", id));
     }
 }

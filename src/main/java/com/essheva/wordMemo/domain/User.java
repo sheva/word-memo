@@ -37,5 +37,6 @@ public class User {
 
     @NotEmpty(message = "Must not be blank or empty.")
     @Email(message = "Invalid email mentioned. Please, double check.")
+    @Indexed(unique = true)
     private String email;
 }

@@ -58,7 +58,7 @@ public class RestorePasswordController {
             return "redirect:restore/" + userFound.getId() + "/sent";
         }
         catch (UserNotFound e) {
-            log.error("User not found.", e);
+            log.warn(e.getMessage());
             bindingResult.addError(new FieldError("user", "email", "User does not exists with this email address."));
             return "restore";
         }
@@ -88,6 +88,13 @@ public class RestorePasswordController {
 
         newPasswordValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
+            log.warn("Validation of user data failed.");
+            if (log.isDebugEnabled()) {
+                bindingResult.getAllErrors().forEach(error -> {
+                    log.debug(error.toString());
+                });
+            }
+
             model.addAttribute("action", "newPassword");
             model.addAttribute("userId", userFound.getId());
             return "restore";

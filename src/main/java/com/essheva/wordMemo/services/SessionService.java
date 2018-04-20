@@ -10,6 +10,4 @@ public interface SessionService {
     Session startSession(User user);
 
     void endSessionById(String id);
-
-    Session findSessionById(String id);
 }

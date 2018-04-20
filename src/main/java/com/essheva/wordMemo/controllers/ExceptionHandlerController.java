@@ -17,40 +17,40 @@ public class ExceptionHandlerController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({NotFoundError.class, UserNotFound.class, ResetTokenNotFoundError.class})
     public ModelAndView handleNotFound(Exception exception, HttpServletRequest request) {
-        log.error("Handling not found exception.");
+        log.trace("Handling not found exception.");
         return createModelAndView(exception, request, "404error");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAlreadyExistsError.class)
     public ModelAndView handleBadRequest(Exception exception, HttpServletRequest request) {
-        log.error("Handling malformed data request exception.");
+        log.trace("Handling malformed data request exception.");
         return createModelAndView(exception, request, "400error");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidCredentialsError.class)
     public ModelAndView handleUnauthorizedRequest(Exception exception, HttpServletRequest request) {
-        log.error("Handling lack of authentication credentials exception.");
+        log.trace("Handling lack of authentication credentials exception.");
         return createModelAndView(exception, request, "401error");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalServerError.class)
     public ModelAndView handleInternalServerError(Exception exception, HttpServletRequest request) {
-        log.error("Handling application failure error.");
+        log.trace("Handling application failure error.");
         return createModelAndView(exception, request, "500error");
     }
 
     @ResponseStatus(HttpStatus.GONE)
     @ExceptionHandler(ResourceNoLongerAvailableError.class)
     public ModelAndView handleResourceGoneError(Exception exception, HttpServletRequest request) {
-        log.error("Handling resource no longer available error.");
+        log.trace("Handling resource no longer available error.");
         return createModelAndView(exception, request, "410error");
     }
 
     private ModelAndView createModelAndView(Exception exception, HttpServletRequest request, String viewName) {
-        log.error(exception.getMessage());
+        log.warn(exception.getMessage());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(viewName);

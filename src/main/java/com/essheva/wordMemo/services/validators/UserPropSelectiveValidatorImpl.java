@@ -42,7 +42,9 @@ public class UserPropSelectiveValidatorImpl implements UserPropSelectiveValidato
     private void processValidationErrors(User user, String objectName, String property,
                                          SpringValidatorAdapter springValidator, BindingResult bindingResult) {
         springValidator.validateProperty(user, property).forEach((v) -> {
-            log.debug(String.format("Validation error for '%s' property: %s", objectName + "." + property, v.getMessage()));
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Validation error for '%s' property: %s", objectName + "." + property, v.getMessage()));
+            }
             bindingResult.addError(new FieldError(objectName, property, v.getMessage()));
         });
     }

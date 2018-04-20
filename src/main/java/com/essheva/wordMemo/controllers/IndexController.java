@@ -51,17 +51,23 @@ public class IndexController {
     public String postIndexLogin(@ModelAttribute("user") User userModel, BindingResult bindingResult, HttpServletResponse response) {
         loginValidator.validate(userModel, bindingResult);
         if (bindingResult.hasErrors()) {
+            log.warn("Validation of user data failed.");
+            if (log.isDebugEnabled()) {
+                bindingResult.getAllErrors().forEach(error -> {
+                    log.debug(error.toString());
+                });
+            }
             return "index";
         }
-
         User user = userService.userLogin(userModel.getUsername(), userModel.getPassword());
         Session session = sessionService.startSession(user);
+
         Cookie cookie = new Cookie("sessionId", session.getId());
         cookie.setHttpOnly(true);
         cookie.setMaxAge(3600);
         response.addCookie(cookie);
 
-        return "redirect:/index";
+        return "index";
     }
 
     @GetMapping("/singup")
@@ -74,6 +80,12 @@ public class IndexController {
     public String singup(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult, HttpServletResponse response) {
         signupValidator.validate(userModel, bindingResult);
         if (bindingResult.hasErrors()) {
+            log.warn("Validation of user data failed.");
+            if (log.isDebugEnabled()) {
+                bindingResult.getAllErrors().forEach(error -> {
+                    log.debug(error.toString());
+                });
+            }
             return "singup";
         }
         User user = userService.addUser(userModel);
@@ -83,14 +95,12 @@ public class IndexController {
     }
 
     @GetMapping("/logout")
-    public String logout(@CookieValue(value = "sessionId", required = false) String sessionId, HttpServletResponse response) {
-        if (sessionId != null) {
-            sessionService.endSessionById(sessionId);
-            Cookie cookie = new Cookie("sessionId", null);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+    public String logout(@CookieValue(value = "sessionId") String sessionId, HttpServletResponse response) {
+        sessionService.endSessionById(sessionId);
+        Cookie cookie = new Cookie("sessionId", null);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return "redirect:/index";
     }
 }
