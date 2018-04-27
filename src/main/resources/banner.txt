@@ -1,0 +1,7 @@
+${AnsiColor.BLUE},___,
+${AnsiColor.BLUE}[O.o]   ${AnsiColor.GREEN}dP   dP   dP                         ${AnsiColor.BLUE}dP       8888ba.88ba
+${AnsiColor.BLUE}/)__)   ${AnsiColor.GREEN}88   88   88                         ${AnsiColor.BLUE}88       88  `8b  `8b
+${AnsiColor.BLUE}-"--"-  ${AnsiColor.GREEN}88  .8P  .8P ${AnsiColor.BLUE}.d8888b. 88d888b. .d888b88       88   88   88 .d8888b. 88d8b.d8b. .d8888b.
+        ${AnsiColor.GREEN}88  d8'  d8' 88'  `88 88'  ${AnsiColor.BLUE}`88 88'  `88       88   88   88 88ooood8 88'`88'`88 88'  `88
+        ${AnsiColor.GREEN}88.d8P8.d8P  88.  .88 88       88.  .88       ${AnsiColor.BLUE}88   88   88 88.  ... 88  88  88 88.  .88
+        ${AnsiColor.GREEN}8888' Y88'   `88888P' dP       `88888P8       dP   dP   dP ${AnsiColor.BLUE}`88888P' dP  dP  dP `88888P'
