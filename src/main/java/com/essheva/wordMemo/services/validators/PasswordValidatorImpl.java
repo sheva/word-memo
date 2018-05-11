@@ -10,11 +10,11 @@ import java.util.Arrays;
 
 @Slf4j
 @Service
-public class NewPasswordValidatorImpl implements NewPasswordValidator {
+public class PasswordValidatorImpl implements PasswordValidator {
 
     private final UserPropSelectiveValidator validator;
 
-    public NewPasswordValidatorImpl(UserPropSelectiveValidator validator) {
+    public PasswordValidatorImpl(UserPropSelectiveValidator validator) {
         this.validator = validator;
     }
 

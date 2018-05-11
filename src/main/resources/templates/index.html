@@ -14,6 +14,9 @@
                 <span class="txt1">Do you want to </span>
                 <a href="/logout" class="txt2">logout?</a>
             </li>
+            <li>
+                <a href="/account" class="txt2">Account settings</a>
+            </li>
         </ul>
     </div>
     <div th:unless="${userLogged}" class="login-container">
@@ -42,8 +45,9 @@
 
                 <ul class="login-more m-t-20">
                     <li class="m-b-8">
-						<span class="txt1">Forgot</span>
-                        <a href="/restore" class="txt2"> Password?</a>
+						<span class="txt1">Forgot
+                        <a href="/restore" class="txt2"> Username / Password</a>
+                        ?</span>
                     </li>
                     <li>
 					    <span class="txt1">Don’t have an account?</span>

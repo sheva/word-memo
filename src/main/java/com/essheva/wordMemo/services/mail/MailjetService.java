@@ -41,8 +41,8 @@ public class MailjetService {
                 "A password reset for your account was requested.\n" +
                 "\n" +
                 "You can use the following link to reset your password:\n" + linkToResetPassword +
-                "\n" +
-                "Note that this link is valid for " + ResetToken.TOKEN_LIVENESS.toHours() + " hours. After the time limit has expired, " +
+                "\n\n" +
+                "Note that this link will expire after " + ResetToken.TOKEN_LIVENESS.toHours() + " hours. After that time, " +
                 "you will have to resubmit the request for a password reset by " + restoreURL + "\n\n" +
                 "Thanks,\n" +
                 "Word Memo.";

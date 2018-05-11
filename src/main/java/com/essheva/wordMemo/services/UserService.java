@@ -13,4 +13,7 @@ public interface UserService {
     User findUserById(String id);
 
     void updatePassword(User user, String newPassword);
+
+    /* Update general user info, password update should be done by {@link #updatePassword(User user, String newPassword)}*/
+    User update(User user);
 }

@@ -5,7 +5,7 @@ import com.essheva.wordMemo.domain.User;
 import com.essheva.wordMemo.services.SessionService;
 import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.validators.LoginValidator;
-import com.essheva.wordMemo.services.validators.SignupValidator;
+import com.essheva.wordMemo.services.validators.PasswordValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,14 +27,14 @@ public class IndexController {
     private final UserService userService;
     private final SessionService sessionService;
     private final LoginValidator loginValidator;
-    private final SignupValidator signupValidator;
+    private final PasswordValidator passwordValidator;
 
     public IndexController(UserService userService, SessionService sessionService, LoginValidator loginValidator,
-                           SignupValidator signupValidator) {
+                           PasswordValidator passwordValidator) {
         this.userService = userService;
         this.sessionService = sessionService;
         this.loginValidator = loginValidator;
-        this.signupValidator = signupValidator;
+        this.passwordValidator = passwordValidator;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -51,12 +51,7 @@ public class IndexController {
     public String postIndexLogin(@ModelAttribute("user") User userModel, BindingResult bindingResult, HttpServletResponse response) {
         loginValidator.validate(userModel, bindingResult);
         if (bindingResult.hasErrors()) {
-            log.warn("Validation of user data failed.");
-            if (log.isDebugEnabled()) {
-                bindingResult.getAllErrors().forEach(error -> {
-                    log.debug(error.toString());
-                });
-            }
+            logErrors(bindingResult);
             return "index";
         }
         User user = userService.userLogin(userModel.getUsername(), userModel.getPassword());
@@ -67,7 +62,7 @@ public class IndexController {
         cookie.setMaxAge(3600);
         response.addCookie(cookie);
 
-        return "index";
+        return "redirect:/index";
     }
 
     @GetMapping("/singup")
@@ -78,14 +73,9 @@ public class IndexController {
 
     @PostMapping("/singup")
     public String singup(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult, HttpServletResponse response) {
-        signupValidator.validate(userModel, bindingResult);
+        passwordValidator.validate(userModel, bindingResult);
         if (bindingResult.hasErrors()) {
-            log.warn("Validation of user data failed.");
-            if (log.isDebugEnabled()) {
-                bindingResult.getAllErrors().forEach(error -> {
-                    log.debug(error.toString());
-                });
-            }
+            logErrors(bindingResult);
             return "singup";
         }
         User user = userService.addUser(userModel);
@@ -102,5 +92,53 @@ public class IndexController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return "redirect:/index";
+    }
+
+    @GetMapping("/account")
+    public String accountSettings(@CookieValue(value = "sessionId", required = false) String sessionId,  Model model){
+        if (sessionId != null) {
+            String username = sessionService.getUsernameBySessionId(sessionId);
+            model.addAttribute("userLogged", username);
+        }
+        model.addAttribute("user", new User());
+
+        return "account";
+    }
+
+    @PostMapping(value = "/account", params = "action=update")
+    public String postAccountUpdate(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            logErrors(bindingResult);
+            return "account";
+        }
+
+        User user = userService.findUserById(userModel.getId());
+        userService.update(user);
+
+        return "account";
+    }
+
+    @PostMapping(value = "/account", params = "action=updatePassword")
+    public String postAccountUpdatePassword(@ModelAttribute("user") User user, BindingResult bindingResult) {
+        final User userFound = userService.findUserById(user.getId());
+
+        passwordValidator.validate(user, bindingResult);
+        if (bindingResult.hasErrors()) {
+            logErrors(bindingResult);
+            return "account";
+        }
+
+        userService.updatePassword(userFound, user.getPassword());
+
+        return "account";
+    }
+
+    private void logErrors(BindingResult bindingResult) {
+        log.warn("Validation of user data failed.");
+        if (log.isDebugEnabled()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                log.debug(error.toString());
+            });
+        }
     }
 }

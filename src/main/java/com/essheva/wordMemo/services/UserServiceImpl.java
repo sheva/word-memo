@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.essheva.wordMemo.crypto.EncryptionUtils.*;
 import static java.lang.String.format;
@@ -83,5 +81,12 @@ public class UserServiceImpl implements UserService {
 
         User userUpdated = userRepository.save(user);
         log.info(format("New password for user '%s' set.", userUpdated));
+    }
+
+    @Override
+    public User update(User user) {
+        User userUpdated = userRepository.save(user);
+        log.info(format("User updated %s.", userUpdated));
+        return userUpdated;
     }
 }

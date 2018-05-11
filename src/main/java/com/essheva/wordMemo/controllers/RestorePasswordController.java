@@ -6,7 +6,7 @@ import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.ResetTokenService;
 import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.mail.MailjetService;
-import com.essheva.wordMemo.services.validators.NewPasswordValidator;
+import com.essheva.wordMemo.services.validators.PasswordValidator;
 import com.essheva.wordMemo.services.validators.UserEmailValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -24,16 +24,16 @@ public class RestorePasswordController {
 
     private final UserService userService;
     private final UserEmailValidator userEmailValidator;
-    private final NewPasswordValidator newPasswordValidator;
+    private final PasswordValidator passwordValidator;
     private final ResetTokenService resetTokenService;
     private final MailjetService mailjetService;
 
     public RestorePasswordController(UserService userService, UserEmailValidator userEmailValidator,
-                                     NewPasswordValidator newPasswordValidator, ResetTokenService resetTokenService,
+                                     PasswordValidator passwordValidator, ResetTokenService resetTokenService,
                                      MailjetService mailjetService) {
         this.userService = userService;
         this.userEmailValidator = userEmailValidator;
-        this.newPasswordValidator = newPasswordValidator;
+        this.passwordValidator = passwordValidator;
         this.resetTokenService = resetTokenService;
         this.mailjetService = mailjetService;
     }
@@ -47,7 +47,7 @@ public class RestorePasswordController {
     }
 
     @PostMapping("/restore")
-    public String restorePasswordAction(@ModelAttribute("user") User user, BindingResult bindingResult, HttpServletRequest request) {
+    public String restorePasswordAction(@ModelAttribute("user") User user, BindingResult bindingResult, Model model, HttpServletRequest request) {
         userEmailValidator.validate(user, bindingResult);
         try {
             User userFound = userService.findUserByEmail(user.getEmail());
@@ -59,7 +59,12 @@ public class RestorePasswordController {
         }
         catch (UserNotFound e) {
             log.warn(e.getMessage());
-            bindingResult.addError(new FieldError("user", "email", "User does not exists with this email address."));
+            FieldError error = new FieldError("user", "email", "User does not exists with this email address.");
+            bindingResult.addError(error);
+            if (log.isDebugEnabled()) {
+                log.debug(error.toString());
+            }
+            model.addAttribute("action", "start");
             return "restore";
         }
     }
@@ -86,7 +91,7 @@ public class RestorePasswordController {
                                   @PathVariable String userId, Model model) {
         final User userFound = userService.findUserById(userId);
 
-        newPasswordValidator.validate(user, bindingResult);
+        passwordValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             log.warn("Validation of user data failed.");
             if (log.isDebugEnabled()) {
@@ -97,6 +102,8 @@ public class RestorePasswordController {
 
             model.addAttribute("action", "newPassword");
             model.addAttribute("userId", userFound.getId());
+            model.addAttribute("username", userFound.getUsername());
+
             return "restore";
         }
 

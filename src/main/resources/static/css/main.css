@@ -348,6 +348,11 @@ button:hover {
     font-family: CabinSketch-Regular, cursive;
 }
 
+.username {
+    font-family:  CabinSketch-Bold, cursive;
+    color: #57b846;
+}
+
 .error-status {
     display: block;
 }

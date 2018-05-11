@@ -31,7 +31,9 @@
         <div th:case="'newPassword'" th:with="userIdVar=${user.getId()}?${user.getId()}:${userId}">
             <div class="wrap-login100 p-t-85 p-b-20">
                 <form class="login100-form validate-form" action="#" th:action="@{/restore/__${userIdVar}__/newPassword}" th:object="${user}" method="post" autocomplete="off">
-                    <span class="login100-form-title cabin-sketch-font">Restoring password...</span>
+                    <span class="login100-form-title cabin-sketch-font">Restoring password for
+                        <span class="username" th:text="${user.getUsername()}?${user.getUsername()}:${username}"></span>
+                    </span>
                     <div class="wrap-input100 m-t-20 m-b-50">
                         <span class="label-input100">New password</span>
                         <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
