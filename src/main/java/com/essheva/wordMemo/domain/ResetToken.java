@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Document
 public class ResetToken {
 
-    public static final Duration TOKEN_LIVENESS = Duration.ofHours(3L);
+    public static final int TOKEN_LIVENESS_SECONDS =  3 * 60 * 60;
 
     @Id
     private String id;
@@ -24,6 +24,7 @@ public class ResetToken {
 
     private String token;
 
+    @Indexed(expireAfterSeconds = TOKEN_LIVENESS_SECONDS)
     private LocalDateTime expiration;
 
     public ResetToken(String userId, String token, LocalDateTime expiration) {

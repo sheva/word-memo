@@ -8,6 +8,7 @@ import com.essheva.wordMemo.repositories.ResetTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class ResetTokenServiceImpl implements ResetTokenService {
     @Override
     public ResetToken createToken(String userId) {
         String token = EncryptionUtils.generateToken();
-        LocalDateTime expiration = LocalDateTime.now().plus(ResetToken.TOKEN_LIVENESS);
+        LocalDateTime expiration = LocalDateTime.now().plus(Duration.ofSeconds(ResetToken.TOKEN_LIVENESS_SECONDS));
 
         ResetToken resetTokenSaved = repository.save(new ResetToken(userId, token, expiration));
         if (log.isDebugEnabled()) {

@@ -8,13 +8,17 @@ import org.springframework.validation.BindingResult;
 public class UserEmailValidatorImpl implements UserEmailValidator {
 
     private final UserPropSelectiveValidator validator;
+    private final Helper helper;
 
-    public UserEmailValidatorImpl(UserPropSelectiveValidator validator) {
+    public UserEmailValidatorImpl(UserPropSelectiveValidator validator, Helper helper) {
         this.validator = validator;
+        this.helper = helper;
     }
 
     @Override
-    public void validate(User user, BindingResult bindingResult) {
+    public boolean validate(User user, BindingResult bindingResult) {
         validator.validate(user, "email", bindingResult);
+        helper.logErrors(bindingResult);
+        return !bindingResult.hasErrors();
     }
 }

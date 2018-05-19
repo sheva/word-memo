@@ -6,7 +6,7 @@ import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.ResetTokenService;
 import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.mail.MailjetService;
-import com.essheva.wordMemo.services.validators.PasswordValidator;
+import com.essheva.wordMemo.services.validators.ChangePasswordValidator;
 import com.essheva.wordMemo.services.validators.UserEmailValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -24,12 +24,12 @@ public class RestorePasswordController {
 
     private final UserService userService;
     private final UserEmailValidator userEmailValidator;
-    private final PasswordValidator passwordValidator;
+    private final ChangePasswordValidator passwordValidator;
     private final ResetTokenService resetTokenService;
     private final MailjetService mailjetService;
 
     public RestorePasswordController(UserService userService, UserEmailValidator userEmailValidator,
-                                     PasswordValidator passwordValidator, ResetTokenService resetTokenService,
+                                     ChangePasswordValidator passwordValidator, ResetTokenService resetTokenService,
                                      MailjetService mailjetService) {
         this.userService = userService;
         this.userEmailValidator = userEmailValidator;
@@ -91,15 +91,7 @@ public class RestorePasswordController {
                                   @PathVariable String userId, Model model) {
         final User userFound = userService.findUserById(userId);
 
-        passwordValidator.validate(user, bindingResult);
-        if (bindingResult.hasErrors()) {
-            log.warn("Validation of user data failed.");
-            if (log.isDebugEnabled()) {
-                bindingResult.getAllErrors().forEach(error -> {
-                    log.debug(error.toString());
-                });
-            }
-
+        if (!passwordValidator.validate(user, bindingResult)) {
             model.addAttribute("action", "newPassword");
             model.addAttribute("userId", userFound.getId());
             model.addAttribute("username", userFound.getUsername());

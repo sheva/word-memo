@@ -2,53 +2,73 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Account Settings</title>
-    <link th:href="@{/css/main.css}" rel="stylesheet" />
+  <title>Account Settings</title>
+  <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 
 <body>
 <div class="login-container">
-    <div class="wrap-login100 p-t-85 p-b-20">
-        <form class="login100-form validate-form" action="#" th:action="@{/account}" th:object="${user}" method="post" autocomplete="on">
-            <span class="login100-form-title cabin-sketch-font">Account Settings</span>
-            <span class="login100-form-avatar">
-                <img th:src="@{/images/memo.png}"/>
-            </span>
+  <div class="wrap-login100 p-t-85 p-b-20">
+    <span class="login100-form-title cabin-sketch-font">Account Settings</span>
+    <span class="login100-form-avatar">
+      <img th:src="@{/images/memo.png}"/>
+    </span>
 
-            <div class="wrap-input100 m-t-75 m-b-35">
-                <span class="label-input100">Username</span>
-                <input class="input100" type="text" th:field="*{username}" required/>
-                <span class="validate-input" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span>
-            </div>
-
-            <div class="wrap-input100 m-b-50">
-                <span class="label-input100">Email</span>
-                <input class="input100" type="email" th:field="*{email}" required/>
-                <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
-            </div>
-
-            <div class="container-login100-form-btn">
-                <button class="login100-form-btn" type="submit" name="action" value="update">Update</button>
-            </div>
-
-            <div class="wrap-input100 m-t-75 m-b-50">
-                <span class="label-input100">Password</span>
-                <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
-                <span class="validate-input" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span>
-            </div>
-
-            <div class="wrap-input100 m-b-35">
-                <span class="label-input100">Verify Password</span>
-                <input class="input100" type="password" th:field="*{passwordVerified}" autocomplete="new-password" required/>
-                <span class="validate-input" th:if="${#fields.hasErrors('passwordVerified')}" th:errors="*{passwordVerified}">Password Verified Error</span>
-            </div>
-
-            <div class="container-login100-form-btn">
-                <button class="login100-form-btn" type="submit" name="action" value="updatePassword">Create new password</button>
-            </div>
-
-        </form>
+    <div class="wrap-input100 m-b-15">
+      <span>Username: <span class="value-text" th:text="${user.username}"></span></span><br/>
+      <span>Member Since: <span class="value-text" th:text="${user.memberSince}"></span></span>
     </div>
+
+    <form class="login100-form validate-form" action="#" th:action="@{/account}" th:object="${user}" method="post"
+          autocomplete="on">
+      <span class="status" th:if="${action eq 'updateEmail'}" th:text="${status}"></span>
+      <input type="hidden" th:value="*{username}" name="username" />
+      <div class="section">
+        <div class="wrap-input100 m-b-15">
+          <span class="label-input100">Email</span>
+          <input class="input100" type="email" th:field="*{email}" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
+        </div>
+        <div class="wrap-input100 m-b-25">
+          <span class="label-input100">Current Password</span>
+          <input class="input100" type="password" th:field="*{curPassword}" autocomplete="new-password" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('curPassword') and action eq 'updateEmail'}"
+                th:errors="*{curPassword}">Password Error</span>
+        </div>
+        <div class="container-login100-form-btn">
+          <button class="login100-form-btn" type="submit" name="action" value="updateEmail">Update</button>
+        </div>
+      </div>
+    </form>
+    <form class="login100-form validate-form" action="#" th:action="@{/account}" th:object="${user}" method="post" autocomplete="on">
+      <div class="section">
+        <span class="status" th:if="${action eq 'updatePassword'}" th:text="${status}"></span>
+        <input type="hidden" th:value="*{username}" name="username" />
+        <input type="hidden" th:value="*{email}" name="email" />
+        <div class="wrap-input100 m-t-20 m-b-15">
+          <span class="label-input100">Current Password</span>
+          <input class="input100" type="password" th:field="*{curPassword}" autocomplete="new-password" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('curPassword') and action eq 'updatePassword'}"
+                th:errors="*{curPassword}">Password Error</span>
+        </div>
+        <div class="wrap-input100 m-b-15">
+          <span class="label-input100">New Password</span>
+          <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('password')}"
+                th:errors="*{password}">Password Error</span>
+        </div>
+        <div class="wrap-input100 m-b-15">
+          <span class="label-input100">Verify Password</span>
+          <input class="input100" type="password" th:field="*{passwordVerified}" autocomplete="new-password" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('passwordVerified')}"
+                th:errors="*{passwordVerified}">Password Verified Error</span>
+        </div>
+        <div class="container-login100-form-btn">
+          <button class="login100-form-btn" type="submit" name="action" value="updatePassword">Change password</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 </body>
 

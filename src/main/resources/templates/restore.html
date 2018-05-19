@@ -1,60 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Restore Password</title>
-    <link th:href="@{/css/main.css}" rel="stylesheet" />
+  <title>Restore Password</title>
+  <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-container">
-    <div th:switch="${action}">
-        <div th:case="'start'">
-            <form class="login100-form validate-form" action="#" th:action="@{/restore}" th:object="${user}" method="post" autocomplete="off">
-                <h1 class="cabin-sketch-font">Do you need to restore password?</h1>
-                <span>Enter your address below, and we will email you instructions for setting a new password.</span>
-                <div class="wrap-input100 m-t-20 m-b-35">
-                    <span class="label-input100">Email</span>
-                    <input class="input100" type="email" th:field="*{email}" autocomplete="new-password" required/>
-                    <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
-                </div>
-                <div class="container-login100-form-btn">
-                    <button class="login100-form-btn">Reset password</button>
-                </div>
-                <div class="m-t-20">
-                    <span class="txt1">I recall the password. Never mind.</span>
-                    <span class="txt1">Go <a class="txt2" th:href="@{${originURL}}">back</a></span>
-                </div>
-            </form>
+  <div th:switch="${action}">
+    <div th:case="'start'">
+      <form class="login100-form validate-form" action="#" th:action="@{/restore}" th:object="${user}" method="post"
+            autocomplete="off">
+        <h1 class="cabin-sketch-font">Do you need to restore password?</h1>
+        <span>Enter your address below, and we will email you instructions for setting a new password.</span>
+        <div class="wrap-input100 m-t-20 m-b-35">
+          <span class="label-input100">Email</span>
+          <input class="input100" type="email" th:field="*{email}" autocomplete="new-password" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
         </div>
-        <div th:case="'sent'">
-            Email with instruction has been sent to <span class="txt2" th:text="${userEmail}"></span>. Please, check your inbox.
+        <div class="container-login100-form-btn">
+          <button class="login100-form-btn">Reset password</button>
         </div>
-        <div th:case="'newPassword'" th:with="userIdVar=${user.getId()}?${user.getId()}:${userId}">
-            <div class="wrap-login100 p-t-85 p-b-20">
-                <form class="login100-form validate-form" action="#" th:action="@{/restore/__${userIdVar}__/newPassword}" th:object="${user}" method="post" autocomplete="off">
-                    <span class="login100-form-title cabin-sketch-font">Restoring password for
-                        <span class="username" th:text="${user.getUsername()}?${user.getUsername()}:${username}"></span>
-                    </span>
-                    <div class="wrap-input100 m-t-20 m-b-50">
-                        <span class="label-input100">New password</span>
-                        <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
-                        <span class="validate-input" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span>
-                    </div>
-                    <div class="wrap-input100 m-b-35">
-                        <span class="label-input100">Confirm new password</span>
-                        <input class="input100" type="password" th:field="*{passwordVerified}" autocomplete="new-password" required/>
-                        <span class="validate-input" th:if="${#fields.hasErrors('passwordVerified')}" th:errors="*{passwordVerified}">Password Verified Error</span>
-                    </div>
-                    <div class="container-login100-form-btn">
-                        <button class="login100-form-btn">Save</button>
-                    </div>
-                </form>
-            </div>
+        <div class="m-t-20">
+          <span class="txt1">I recall the password. Never mind.</span>
+          <span class="txt1">Go <a class="txt2" th:href="@{${originURL}}">back</a></span>
         </div>
-        <div th:case="'complete'" class="txt1">
-            Yahooo,<span class="txt2" th:text="' ' + ${user.username}"></span>, you successfully set new password!
-            Go to <a class="txt2" th:href="@{/index}">login</a> page.
-        </div>
+      </form>
     </div>
+    <div th:case="'sent'">
+      Email with instruction has been sent to <span class="txt2" th:text="${userEmail}"></span>. Please, check your
+      inbox.
+    </div>
+    <div th:case="'newPassword'" th:with="userIdVar=${user.getId()}?${user.getId()}:${userId}">
+      <div class="wrap-login100 p-t-85 p-b-20">
+        <form class="login100-form validate-form" action="#" th:action="@{/restore/__${userIdVar}__/newPassword}"
+              th:object="${user}" method="post" autocomplete="off">
+                    <span class="login100-form-title cabin-sketch-font">Restoring password for
+                        <span class="value-text"
+                              th:text="${user.getUsername()}?${user.getUsername()}:${username}"></span>
+                    </span>
+          <div class="wrap-input100 m-t-20 m-b-50">
+            <span class="label-input100">New password</span>
+            <input class="input100" type="password" th:field="*{password}" autocomplete="new-password" required/>
+            <span class="validate-input" th:if="${#fields.hasErrors('password')}"
+                  th:errors="*{password}">Password Error</span>
+          </div>
+          <div class="wrap-input100 m-b-35">
+            <span class="label-input100">Confirm new password</span>
+            <input class="input100" type="password" th:field="*{passwordVerified}" autocomplete="new-password"
+                   required/>
+            <span class="validate-input" th:if="${#fields.hasErrors('passwordVerified')}"
+                  th:errors="*{passwordVerified}">Password Verified Error</span>
+          </div>
+          <div class="container-login100-form-btn">
+            <button class="login100-form-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div th:case="'complete'" class="txt1">
+      Yahooo,<span class="txt2" th:text="' ' + ${user.username}"></span>, you successfully set new password!
+      Go to <a class="txt2" th:href="@{/index}">login</a> page.
+    </div>
+  </div>
 </div>
 </body>
 </html>

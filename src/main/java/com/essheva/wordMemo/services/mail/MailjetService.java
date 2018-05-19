@@ -14,6 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 import static com.mailjet.client.resource.Contact.*;
 import static com.mailjet.client.resource.Email.*;
 
@@ -42,7 +44,7 @@ public class MailjetService {
                 "\n" +
                 "You can use the following link to reset your password:\n" + linkToResetPassword +
                 "\n\n" +
-                "Note that this link will expire after " + ResetToken.TOKEN_LIVENESS.toHours() + " hours. After that time, " +
+                "Note that this link will expire after " + Duration.ofSeconds(ResetToken.TOKEN_LIVENESS_SECONDS).toHours() + " hours. After that time, " +
                 "you will have to resubmit the request for a password reset by " + restoreURL + "\n\n" +
                 "Thanks,\n" +
                 "Word Memo.";

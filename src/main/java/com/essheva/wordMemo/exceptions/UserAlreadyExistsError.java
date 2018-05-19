@@ -16,4 +16,9 @@ public class UserAlreadyExistsError extends RuntimeException {
     public UserAlreadyExistsError(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public UserAlreadyExistsError(String property, String value, Throwable cause) {
+        super(String.format("User with %s '%s' already exists. Please, choose another %s.",
+                property, value, property), cause);
+    }
 }

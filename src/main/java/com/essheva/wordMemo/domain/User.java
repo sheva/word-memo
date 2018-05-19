@@ -11,10 +11,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Getter
 @Setter
-@ToString(exclude = {"salt", "password", "passwordVerified"})
+@ToString(exclude = {"salt", "password", "curPassword", "passwordVerified"})
 @Document
 public class User {
 
@@ -31,6 +33,9 @@ public class User {
     private String password;
 
     @Transient
+    private String curPassword;
+
+    @Transient
     private String passwordVerified;
 
     private String salt;
@@ -39,4 +44,6 @@ public class User {
     @Email(message = "Invalid email mentioned. Please, double check.")
     @Indexed(unique = true)
     private String email;
+
+    private LocalDate memberSince = LocalDate.now(ZoneOffset.UTC);
 }

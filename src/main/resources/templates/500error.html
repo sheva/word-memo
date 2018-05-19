@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>500 Internal Server Error</title>
-    <link th:href="@{/css/main.css}" rel="stylesheet" />
+  <title>500 Internal Server Error</title>
+  <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-container">
-    <div class="error-status">
-        <h1 class="cabin-sketch-font">Something really bad happened...500 status code.</h1>
-        <div th:text="${exception.getMessage()}"></div>
-        <span class="txt1">Go <a class="txt2" th:href="@{${originURL}}">back</a></span>
-    </div>
+  <div class="error-status">
+    <h1 class="cabin-sketch-font">Something really bad happened...500 status code.</h1>
+    <div th:text="${exception.getMessage()}"></div>
+    <span class="txt1">Go <a class="txt2" th:href="@{${originURL}}">back</a></span>
+  </div>
 </div>
 </body>
 </html>

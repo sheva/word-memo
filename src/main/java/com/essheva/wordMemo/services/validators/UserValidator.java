@@ -5,5 +5,5 @@ import org.springframework.validation.BindingResult;
 
 public interface UserValidator {
 
-    void validate(User user, BindingResult bindingResult);
+    boolean validate(User user, BindingResult bindingResult);
 }
