@@ -58,7 +58,8 @@ public class IndexController {
     }
 
     @PostMapping("/")
-    public String postIndexLogin(@ModelAttribute("user") User userModel, BindingResult bindingResult, HttpServletResponse response) {
+    public String postIndexLogin(@ModelAttribute("user") User userModel, BindingResult bindingResult,
+                                 HttpServletResponse response) {
         if (!loginValidator.validate(userModel, bindingResult)) {
             return "index";
         }
@@ -82,7 +83,8 @@ public class IndexController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult, HttpServletResponse response) {
+    public String signup(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult,
+                         HttpServletResponse response) {
         if (!signinValidator.validate(userModel, bindingResult)) {
             return "signup";
         }

@@ -39,7 +39,7 @@ public class RestorePasswordController {
     }
 
     @GetMapping("/restore")
-    public String restorePassword(Model model, HttpServletRequest request) {
+    public String restoreInitial(Model model, HttpServletRequest request) {
         model.addAttribute("user", new User());
         model.addAttribute("action", "start");
         model.addAttribute("originURL", request.getRequestURL());
@@ -47,7 +47,8 @@ public class RestorePasswordController {
     }
 
     @PostMapping("/restore")
-    public String restorePasswordAction(@ModelAttribute("user") User user, BindingResult bindingResult, Model model, HttpServletRequest request) {
+    public String restoreInitial(@ModelAttribute("user") User user, BindingResult bindingResult, Model model,
+                                        HttpServletRequest request) {
         userEmailValidator.validate(user, bindingResult);
         try {
             User userFound = userService.findUserByEmail(user.getEmail());
@@ -70,7 +71,7 @@ public class RestorePasswordController {
     }
 
     @GetMapping("/restore/{userId}/sent")
-    public String restorePasswordSent(@PathVariable String userId, Model model, HttpServletRequest request) {
+    public String restoreTokenSentToEmail(@PathVariable String userId, Model model) {
         User user = userService.findUserById(userId);
         model.addAttribute("action", "sent");
         model.addAttribute("userEmail", user.getEmail());
@@ -78,7 +79,7 @@ public class RestorePasswordController {
     }
 
     @GetMapping(value = "/restore", params = {"token"})
-    public String restorePassword(@RequestParam(value = "token") String token, Model model) {
+    public String restoreBySpecifiedToken(@RequestParam("token") String token, Model model) {
         ResetToken resetToken = resetTokenService.findByToken(token);
         User user = userService.findUserById(resetToken.getUserId());
         model.addAttribute("action", "newPassword");
@@ -86,6 +87,7 @@ public class RestorePasswordController {
         return "restore";
     }
 
+// TODO: use PATCH
     @PostMapping("/restore/{userId}/newPassword")
     public String saveNewPassword(@ModelAttribute("user") User user, BindingResult bindingResult,
                                   @PathVariable String userId, Model model) {
@@ -106,7 +108,7 @@ public class RestorePasswordController {
     }
 
     @GetMapping("/restore/{userId}/complete")
-    public String newPasswordSet(@PathVariable String userId, Model model) {
+    public String restoreFinal(@PathVariable String userId, Model model) {
         User user = userService.findUserById(userId);
         model.addAttribute("user", user);
         model.addAttribute("action", "complete");

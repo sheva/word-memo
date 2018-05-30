@@ -22,13 +22,13 @@ public class Session {
     private String id;
 
     @NotEmpty(message = "Must not be blank or empty.")
-    private String username;
+    private String userId;
 
     @Indexed(expireAfterSeconds = SESSION_LIVENESS_SECONDS)
     private LocalDateTime expired = LocalDateTime.now(ZoneOffset.UTC);
 
-    public Session(String id, String username) {
+    public Session(String id, String userId) {
         this.id = id;
-        this.username = username;
+        this.userId = userId;
     }
 }

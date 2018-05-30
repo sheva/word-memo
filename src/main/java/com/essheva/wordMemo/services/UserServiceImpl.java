@@ -68,24 +68,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByEmail(String email) throws UserNotFound {
         Optional<User> userOptional = userRepository.findByEmail(email);
-        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with email address '%s'.", email)));
-        log.trace(format("User with email address '%s' found.", email));
+        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with by address '%s'.", email)));
+        log.trace(format("User by email address '%s' found.", email));
         return user;
     }
 
     @Override
     public User findUserById(String id) throws UserNotFound {
         Optional<User> userOptional = userRepository.findById(id);
-        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with id '%s'.", id)));
-        log.trace(format("User with id '%s' found.", id));
+        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user by id '%s'.", id)));
+        log.trace(format("User by id '%s' found.", id));
         return user;
     }
 
     @Override
     public User findUserByUsername(String username) throws UserNotFound {
         Optional<User> userOptional = userRepository.findByUsername(username);
-        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user with username '%s'.", username)));
-        log.trace(format("User with username '%s' found.", username));
+        User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user by username '%s'.", username)));
+        log.trace(format("User by username '%s' found.", username));
         return user;
     }
 

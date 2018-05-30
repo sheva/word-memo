@@ -50,7 +50,7 @@ public class ExceptionHandlerController {
     }
 
     private ModelAndView createModelAndView(Exception exception, HttpServletRequest request, String viewName) {
-        log.warn(exception.getMessage());
+        log.warn(exception.getMessage(), exception);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(viewName);
