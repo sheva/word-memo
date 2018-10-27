@@ -6,7 +6,7 @@ import org.springframework.validation.BindingResult;
 
 @Slf4j
 @Service
-class Helper {
+class LogHelper {
 
     void logErrors(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

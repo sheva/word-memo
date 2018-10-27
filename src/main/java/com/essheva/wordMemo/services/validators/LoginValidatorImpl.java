@@ -12,17 +12,17 @@ import java.util.Arrays;
 public class LoginValidatorImpl implements LoginValidator {
 
     private final UserPropSelectiveValidator validator;
-    private final Helper helper;
+    private final LogHelper logHelper;
 
-    public LoginValidatorImpl(UserPropSelectiveValidator validator, Helper helper) {
+    public LoginValidatorImpl(UserPropSelectiveValidator validator, LogHelper logHelper) {
         this.validator = validator;
-        this.helper = helper;
+        this.logHelper = logHelper;
     }
 
     @Override
     public boolean validate(User user, BindingResult bindingResult) {
         validator.validate(user, Arrays.asList("username", "password"), bindingResult);
-        helper.logErrors(bindingResult);
+        logHelper.logErrors(bindingResult);
         return !bindingResult.hasErrors();
     }
 }

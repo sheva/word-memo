@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(final User user) {
-        final String salt = getSalt();
+        final String salt = generateSalt();
         final String passwordSecured = generateSecurePassword(user.getPassword(), salt);
         user.setSalt(salt);
         user.setPassword(passwordSecured);
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(User user, String newPassword) {
-        final String salt = getSalt();
+        final String salt = generateSalt();
         final String passwordSecured = generateSecurePassword(newPassword, salt);
         user.setSalt(salt);
         user.setPassword(passwordSecured);

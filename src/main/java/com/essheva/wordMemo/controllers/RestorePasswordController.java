@@ -6,9 +6,11 @@ import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.ResetTokenService;
 import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.mail.MailjetService;
+import com.essheva.wordMemo.services.validators.CaptchaValidator;
 import com.essheva.wordMemo.services.validators.ChangePasswordValidator;
 import com.essheva.wordMemo.services.validators.UserEmailValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,34 +24,47 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class RestorePasswordController {
 
-    private final UserService userService;
     private final UserEmailValidator userEmailValidator;
     private final ChangePasswordValidator passwordValidator;
+    private final CaptchaValidator captchaValidator;
     private final ResetTokenService resetTokenService;
+    private final UserService userService;
     private final MailjetService mailjetService;
 
-    public RestorePasswordController(UserService userService, UserEmailValidator userEmailValidator,
-                                     ChangePasswordValidator passwordValidator, ResetTokenService resetTokenService,
-                                     MailjetService mailjetService) {
-        this.userService = userService;
+    public RestorePasswordController(UserEmailValidator userEmailValidator, ChangePasswordValidator passwordValidator,
+                                     CaptchaValidator captchaValidator, ResetTokenService resetTokenService,
+                                     UserService userService, MailjetService mailjetService) {
         this.userEmailValidator = userEmailValidator;
         this.passwordValidator = passwordValidator;
+        this.captchaValidator = captchaValidator;
         this.resetTokenService = resetTokenService;
+        this.userService = userService;
         this.mailjetService = mailjetService;
     }
 
     @GetMapping("/restore")
-    public String restoreInitial(Model model, HttpServletRequest request) {
+    public String restoreInitial(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("action", "start");
-        model.addAttribute("originURL", request.getRequestURL());
+        model.addAttribute("originURL", "index");
+        model.addAttribute("captcha", "");
         return "restore";
     }
 
     @PostMapping("/restore")
-    public String restoreInitial(@ModelAttribute("user") User user, BindingResult bindingResult, Model model,
-                                        HttpServletRequest request) {
+    public String restoreInitial(@ModelAttribute("user") User user, @ModelAttribute("captcha") String captcha,
+                                 BindingResult bindingResult, Model model, HttpServletRequest request) {
+
+        String expected = (String) request.getSession().getAttribute("CAPTCHA");
+        if (!Strings.isBlank(expected)) {
+            boolean result = captchaValidator.validate(expected, captcha, bindingResult);
+            if (log.isDebugEnabled()) {
+                log.debug("Captcha validation " + (result ? "succeeded." : "failed."));
+            }
+        }
+
         userEmailValidator.validate(user, bindingResult);
+
         try {
             User userFound = userService.findUserByEmail(user.getEmail());
             ResetToken resetToken = resetTokenService.createToken(userFound.getId());

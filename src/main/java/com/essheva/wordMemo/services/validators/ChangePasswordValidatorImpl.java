@@ -13,11 +13,11 @@ import java.util.Arrays;
 public class ChangePasswordValidatorImpl implements ChangePasswordValidator {
 
     private final UserPropSelectiveValidator validator;
-    private final Helper helper;
+    private final LogHelper logHelper;
 
-    public ChangePasswordValidatorImpl(UserPropSelectiveValidator validator, Helper helper) {
+    public ChangePasswordValidatorImpl(UserPropSelectiveValidator validator, LogHelper logHelper) {
         this.validator = validator;
-        this.helper = helper;
+        this.logHelper = logHelper;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ChangePasswordValidatorImpl implements ChangePasswordValidator {
             log.debug("Passwords do not match.");
             bindingResult.addError(new FieldError("user", "passwordVerified", "Passwords do not match."));
         }
-        helper.logErrors(bindingResult);
+        logHelper.logErrors(bindingResult);
         return !bindingResult.hasErrors();
     }
 }

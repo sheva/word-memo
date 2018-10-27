@@ -19,15 +19,19 @@ public class EncryptionUtils {
     private static final String ALNUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ITERATIONS = 10000;
     private static final int TOKEN_CAPACITY = 32;
-    private static final int SALT_LENGTH = 64;
+    private static final int DEFUALT_SALT_LENGTH = 64;
     private static final int KEY_LENGTH = 256;
 
-    public static String getSalt() {
-        StringBuilder salt = new StringBuilder(SALT_LENGTH);
-        for (int i = 0; i < SALT_LENGTH; i++) {
+    public static String generateSalt(int length) {
+        StringBuilder salt = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
             salt.append(ALNUM.charAt(GENERATOR.nextInt(ALNUM.length())));
         }
         return salt.toString();
+    }
+
+    public static String generateSalt() {
+        return generateSalt(DEFUALT_SALT_LENGTH);
     }
 
     public static byte[] hash(char[] password, byte[] salt) {

@@ -10,10 +10,10 @@ import org.springframework.validation.FieldError;
 @Service
 public class SigninValidatorImpl implements SigninValidator {
 
-    private final Helper helper;
+    private final LogHelper logHelper;
 
-    public SigninValidatorImpl(Helper helper) {
-        this.helper = helper;
+    public SigninValidatorImpl(LogHelper logHelper) {
+        this.logHelper = logHelper;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class SigninValidatorImpl implements SigninValidator {
             log.debug("Passwords do not match.");
             bindingResult.addError(new FieldError("user", "passwordVerified", "Passwords do not match."));
         }
-        helper.logErrors(bindingResult);
+        logHelper.logErrors(bindingResult);
         return !bindingResult.hasErrors();
     }
 }

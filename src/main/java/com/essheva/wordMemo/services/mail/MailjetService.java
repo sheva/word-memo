@@ -58,7 +58,7 @@ public class MailjetService {
                 .property(MJCUSTOMID, "WM-Email");
         try {
             MailjetResponse response = client.post(email);
-            log.debug("Email " + (response.getStatus() == 200 ? "successfully" : "not") + " sent to " + receiverEmail);
+            log.debug("E-mail " + (response.getStatus() == 200 ? "successfully" : "not") + " sent to " + receiverEmail);
         } catch (MailjetException | MailjetSocketTimeoutException e) {
             log.error("Error occurred during sending email to " + receiverEmail, e.getMessage(), e);
             throw new InternalServerError("Error occurred during sending email to " + receiverEmail + ". Please, try again later.", e);
