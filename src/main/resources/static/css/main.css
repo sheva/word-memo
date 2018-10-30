@@ -385,3 +385,23 @@ button:hover {
 .error-status {
   display: block;
 }
+
+.captcha-section {
+  display: flex;
+}
+
+.captcha-section .input-container {
+  width: 10em;
+  margin-right: 20px;
+}
+
+.captcha-section .image-container > img {
+  padding: 10px;
+  margin-right: 10px;
+  vertical-align: middle;
+  background-color: #57b846;
+}
+
+.captcha-section .image-container > .reset-trigger > img {
+  vertical-align: middle;
+}

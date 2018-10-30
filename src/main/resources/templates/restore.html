@@ -8,26 +8,27 @@
 <div class="login-container">
   <div th:switch="${action}">
     <div th:case="'start'">
-      <form class="login100-form validate-form" action="#" th:action="@{/restore}" method="post"
-            autocomplete="off">
+      <form class="login100-form validate-form" action="#" th:action="@{/restore}" th:object="${restoreInfo}" method="post" autocomplete="off">
         <h1 class="cabin-sketch-font">Do you need to restore password?</h1>
         <span>Enter e-mail address associated with your account, and we will send you instructions for setting a new password.</span>
         <div class="wrap-input100 m-t-20 m-b-35">
           <span class="label-input100">E-mail</span>
-          <input class="input100" type="email" th:field="${user.email}" autocomplete="new-password" required/>
-          <span class="validate-input" th:if="${#fields.hasErrors('user.email')}" th:errors="${user.email}">Email Error</span>
+          <input class="input100" type="email" th:field="*{email}" autocomplete="new-password" required/>
+          <span class="validate-input" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span>
         </div>
-        <div>
-          <div>
-            <span>And, please, type the code shown</span>
-            <img id="captcha_id" src="captcha"/>
-            <a th:href="restore" onclick="document.getElementById('captcha_id').src = 'captcha'; return true;">
-              <img th:src="@{/images/refresh-icon.png}" th:width="30" th:height="30" th:title="refresh"/>
-            </a>
-          </div>
-          <div class="wrap-input100 m-b-35">
-            <input class="input100" th:field="${captcha}" required/>
-            <span class="validate-input" th:if="${#fields.hasErrors('captcha')}" th:errors="${captcha}">Captcha Error</span>
+        <div class="m-b-35">
+          <div class="m-b-15">And, please, type the code shown</div>
+          <div class="captcha-section">
+            <div class="wrap-input100 input-container">
+              <input class="input100" th:field="*{captcha}" required/>
+              <span class="validate-input" th:if="${#fields.hasErrors('captcha')}" th:errors="*{captcha}">Captcha Error</span>
+            </div>
+            <div class="image-container">
+              <img id="captcha_id" src="captcha"/>
+              <a class="reset-trigger" th:href="restore" onclick="document.getElementById('captcha_id').src = 'captcha?_=' + Math.random(); return false;">
+                <img th:src="@{/images/refresh-icon.png}" th:width="30" th:height="30" th:title="refresh"/>
+              </a>
+            </div>
           </div>
         </div>
         <div class="container-login100-form-btn">

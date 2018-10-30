@@ -11,18 +11,18 @@ import java.util.Arrays;
 @Service
 public class LoginValidatorImpl implements LoginValidator {
 
-    private final UserPropSelectiveValidator validator;
-    private final LogHelper logHelper;
+    private final PropSelectiveValidator<User> validator;
+    private final Helper<User> helper;
 
-    public LoginValidatorImpl(UserPropSelectiveValidator validator, LogHelper logHelper) {
+    public LoginValidatorImpl(PropSelectiveValidator<User> validator, Helper<User> helper) {
         this.validator = validator;
-        this.logHelper = logHelper;
+        this.helper = helper;
     }
 
     @Override
     public boolean validate(User user, BindingResult bindingResult) {
         validator.validate(user, Arrays.asList("username", "password"), bindingResult);
-        logHelper.logErrors(bindingResult);
+        helper.logErrors(user, bindingResult);
         return !bindingResult.hasErrors();
     }
 }

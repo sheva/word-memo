@@ -1,7 +1,5 @@
 package com.essheva.wordMemo.services.validators;
 
-import com.essheva.wordMemo.domain.User;
-import com.essheva.wordMemo.services.validators.UserPropSelectiveValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -16,30 +14,18 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class UserPropSelectiveValidatorImpl implements UserPropSelectiveValidator {
+public class PropSelectiveValidatorImpl<T> implements PropSelectiveValidator<T> {
 
     private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator;
+    private final Helper<T> helper;
 
-    public UserPropSelectiveValidatorImpl() {
+    public PropSelectiveValidatorImpl(Helper<T> helper) {
         validator = factory.getValidator();
+        this.helper = helper;
     }
 
-    @Override
-    public void validate(User user, List<String> properties, BindingResult bindingResult) {
-        final String objectName = "user";
-        SpringValidatorAdapter springValidator = new SpringValidatorAdapter(validator);
-        properties.parallelStream().forEach((property) -> {
-            processValidationErrors(user, objectName, property, springValidator, bindingResult);
-        });
-    }
-
-    @Override
-    public void validate(User user, String property, BindingResult bindingResult) {
-        validate(user, Arrays.asList(property), bindingResult);
-    }
-
-    private void processValidationErrors(User user, String objectName, String property,
+    private void processValidationErrors(T user, String objectName, String property,
                                          SpringValidatorAdapter springValidator, BindingResult bindingResult) {
         springValidator.validateProperty(user, property).forEach((v) -> {
             if (log.isDebugEnabled()) {
@@ -48,5 +34,17 @@ public class UserPropSelectiveValidatorImpl implements UserPropSelectiveValidato
             bindingResult.addError(new FieldError(objectName, property, v.getMessage()));
         });
     }
-}
 
+    @Override
+    public void validate(T obj, List<String> properties, BindingResult bindingResult) {
+        SpringValidatorAdapter springValidator = new SpringValidatorAdapter(validator);
+        properties.parallelStream().forEach((property) -> {
+            processValidationErrors(obj, helper.getObjectName(obj), property, springValidator, bindingResult);
+        });
+    }
+
+    @Override
+    public void validate(T obj, String property, BindingResult bindingResult) {
+        validate(obj, Arrays.asList(property), bindingResult);
+    }
+}
