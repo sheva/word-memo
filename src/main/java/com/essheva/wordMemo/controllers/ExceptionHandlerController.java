@@ -2,6 +2,7 @@ package com.essheva.wordMemo.controllers;
 
 import com.essheva.wordMemo.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @ControllerAdvice
+@ComponentScan(basePackages = {"com.essheva.wordMemo.controllers"})
 public class ExceptionHandlerController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

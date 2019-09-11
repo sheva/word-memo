@@ -4,6 +4,7 @@ import com.essheva.wordMemo.exceptions.InternalServerError;
 import com.essheva.wordMemo.services.captcha.CaptchaService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import java.io.OutputStream;
 
 @Slf4j
 @Controller
+@ComponentScan(basePackages = {"com.essheva.wordMemo.controllers"})
 public class CaptchaController {
 
     private final CaptchaService service;

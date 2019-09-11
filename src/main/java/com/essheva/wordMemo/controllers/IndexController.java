@@ -8,6 +8,7 @@ import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.validators.LoginValidator;
 import com.essheva.wordMemo.services.validators.SigninValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +27,7 @@ import static java.lang.String.format;
 
 @Slf4j
 @Controller
+@ComponentScan(basePackages = {"com.essheva.wordMemo.controllers"})
 public class IndexController {
 
     private final UserService userService;

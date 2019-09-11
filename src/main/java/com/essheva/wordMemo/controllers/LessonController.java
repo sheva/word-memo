@@ -4,12 +4,14 @@ import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.LessonService;
 import com.essheva.wordMemo.services.SessionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
+@ComponentScan(basePackages = {"com.essheva.wordMemo.controllers"})
 public class LessonController {
 
     private final SessionService sessionService;

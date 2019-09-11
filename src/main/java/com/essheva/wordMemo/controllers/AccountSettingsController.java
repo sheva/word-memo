@@ -7,6 +7,7 @@ import com.essheva.wordMemo.services.UserService;
 import com.essheva.wordMemo.services.validators.ChangePasswordValidator;
 import com.essheva.wordMemo.services.validators.UserEmailValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
+@ComponentScan(basePackages = {"com.essheva.wordMemo.controllers"})
 public class AccountSettingsController {
 
     private static final String viewName = "account";
