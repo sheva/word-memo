@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(final User user) {
+    public User addUser(final User user) throws UserAlreadyExistsError {
         final String salt = generateSalt();
         final String passwordSecured = generateSecurePassword(user.getPassword(), salt);
         user.setSalt(salt);
@@ -39,9 +39,7 @@ public class UserServiceImpl implements UserService {
         } catch (DuplicateKeyException e) {
             Matcher matcher = Pattern.compile(".*index: (.*) dup key: \\{ : \"(.+)\" };.*").matcher(e.getMessage());
             if (matcher.find()) {
-                String property = matcher.group(1);
-                String value = matcher.group(2);
-
+                String property = matcher.group(1), value = matcher.group(2);
                 log.warn(format("User with the same %s was found.", property), e);
                 throw new UserAlreadyExistsError(property, value, e);
             } else {
@@ -53,13 +51,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User passwordMatch(final String username, final String password) throws UserNotFound {
+    public User passwordMatch(final String username, final String password) throws UserNotFound, InvalidCredentialsError {
         final Optional<User> userOptional = userRepository.findByUsername(username);
         final User user = userOptional.orElseThrow(() -> new UserNotFound(format("Can't find user '%s'.", username)));
 
         if (!matchUserPassword(password, user.getPassword(), user.getSalt())) {
             log.warn("Password does not match error.");
-            throw new InvalidCredentialsError("Password mismatch error.");
+            throw new InvalidCredentialsError("Invalid password.");
         }
 
         return user;

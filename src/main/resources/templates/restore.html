@@ -41,8 +41,8 @@
       </form>
     </div>
     <div th:case="'sent'">
-      E-mail with instruction has been sent to <span class="txt2" th:text="${userEmail}"></span>. Please, check your
-      inbox.
+      E-mail with instruction has been sent to <span class="txt2" th:text="${userEmail}"></span>. Please, check your inbox.<br/>
+      Go to login page.
     </div>
     <div th:case="'newPassword'" th:with="userIdVar=${user.getId()}?${user.getId()}:${userId}">
       <div class="wrap-login100 p-t-85 p-b-20">

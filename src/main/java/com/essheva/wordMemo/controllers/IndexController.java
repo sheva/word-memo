@@ -2,6 +2,8 @@ package com.essheva.wordMemo.controllers;
 
 import com.essheva.wordMemo.domain.Session;
 import com.essheva.wordMemo.domain.User;
+import com.essheva.wordMemo.exceptions.InvalidCredentialsError;
+import com.essheva.wordMemo.exceptions.UserAlreadyExistsError;
 import com.essheva.wordMemo.exceptions.UserNotFound;
 import com.essheva.wordMemo.services.SessionService;
 import com.essheva.wordMemo.services.UserService;
@@ -12,6 +14,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,7 +69,18 @@ public class IndexController {
         if (!loginValidator.validate(userModel, bindingResult)) {
             return "index";
         }
-        User user = userService.passwordMatch(userModel.getUsername(), userModel.getPassword());
+
+        User user;
+        try {
+            user = userService.passwordMatch(userModel.getUsername(), userModel.getPassword());
+        } catch (InvalidCredentialsError e) {
+            bindingResult.addError(new FieldError("user", "password", e.getMessage()));
+            return "index";
+        } catch (UserNotFound e) {
+            bindingResult.addError(new FieldError("user", "username", e.getMessage()));
+            return "index";
+        }
+
         Session session = sessionService.startSession(user);
 
         Cookie cookie = new Cookie("sessionId", session.getId());
@@ -87,10 +102,17 @@ public class IndexController {
     @PostMapping("/signup")
     public String signup(@ModelAttribute("user") @Valid User userModel, BindingResult bindingResult,
                          HttpServletResponse response) {
+        User user;
+        try {
+            user = userService.addUser(userModel);
+        } catch (UserAlreadyExistsError e) {
+            bindingResult.addError(new FieldError("user",
+                    e.getProperty() != null ? e.getProperty() : "username", e.getMessage()));
+            return "signup";
+        }
         if (!signinValidator.validate(userModel, bindingResult)) {
             return "signup";
         }
-        User user = userService.addUser(userModel);
         Session session = sessionService.startSession(user);
         response.addCookie(new Cookie("sessionId", session.getId()));
         return "redirect:/index";
