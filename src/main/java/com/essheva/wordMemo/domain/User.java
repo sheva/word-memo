@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,6 +20,9 @@ import java.time.ZoneOffset;
 @Setter
 @ToString(exclude = {"salt", "password", "curPassword", "passwordVerified"})
 @Document
+@CompoundIndexes({
+        @CompoundIndex(name = "username_email", def = "{'username' : 1, 'email': 1}", unique = true)
+})
 public class User {
 
     @Id
