@@ -29,7 +29,7 @@ public class User {
     private String id;
 
     @NotEmpty(message = "Must not be blank or empty.")
-    @Pattern(regexp = "^[\\p{Alnum}]{2,}$", message = "Should contain at least 2 alphanumeric symbols.")
+    @Pattern(regexp = "^[\\p{Alnum}]{2,}$", message = "Should contain alphanumeric symbols and at least 2.")
     @Indexed(unique = true)
     private String username;
 
