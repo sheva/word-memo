@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
-import static com.mailjet.client.resource.Contact.*;
 import static com.mailjet.client.resource.Email.*;
 
 
